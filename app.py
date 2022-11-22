@@ -20,13 +20,15 @@ maze = np.array(
     ]
 )
 
+dots = np.array([[0 if cell == 1 else 1 for cell in line] for line in maze])
+
 
 pacman_line = st.slider("Pacman line :", 0, maze.shape[0], 0)
 
 layout_list = []
 for pacman_line in range(0, 5):
     for pacman_column in range(0, 5):
-        layout_list.append(create_maze(maze, pacman_line, pacman_column))
+        layout_list.append(create_maze(maze, pacman_line, pacman_column, dots))
 
 frames = [
     {"name": f"{i}", "data": [], "layout": layout_list[i]}
@@ -40,7 +42,7 @@ sliderSteps = [
         "args": [
             [f"{i}"],
             {
-                "mode": "cubic-in-out",
+                "mode": "immediate",
                 "transition": {"duration": 0},
                 "frame": {"duration": 0, "redraw": "true"},
             },
