@@ -19,57 +19,44 @@ maze = np.array(
         [1, 1, 1, 1, 1, 1],
     ]
 )
-maze_2 = deepcopy(maze)
-maze_2[0][0] = 0
 
-layout1 = create_maze(maze)
-layout2 = create_maze(maze_2)
+
+pacman_line = st.slider("Pacman line :", 0, maze.shape[0], 0)
+
+layout_list = []
+for pacman_line in range(0, 5):
+    for pacman_column in range(0, 5):
+        layout_list.append(create_maze(maze, pacman_line, pacman_column))
 
 frames = [
-    {"name": "frame1", "data": [], "layout": layout1},
-    {"name": "frame2", "data": [], "layout": layout2},
+    {"name": f"{i}", "data": [], "layout": layout_list[i]}
+    for i in range(len(layout_list))
 ]
 
 sliderSteps = [
     {
         "method": "animate",
-        "label": "frame1",
+        "label": f"{i}",
         "args": [
-            ["frame1"],
+            [f"{i}"],
             {
-                "mode": "immediate",
+                "mode": "cubic-in-out",
                 "transition": {"duration": 0},
                 "frame": {"duration": 0, "redraw": "true"},
             },
         ],
-    },
-    {
-        "method": "animate",
-        "label": "frame2",
-        "args": [
-            ["frame2"],
-            {
-                "mode": "immediate",
-                "transition": {"duration": 0},
-                "frame": {"duration": 0, "redraw": "true"},
-            },
-        ],
-    },
+    }
+    for i in range(len(layout_list))
 ]
 
 layout = {
     "sliders": [
         {
-            "currentvalue": {
-                "visible": True,
-                "xanchor": "right",
-            },
             "steps": sliderSteps,
         }
     ]
 }
-
-fig = plotly.graph_objects.Figure([], layout, frames)
+fig = plotly.graph_objects.Figure([], layout | layout_list[0], frames)
 
 # Plot!
 st.plotly_chart(fig, use_container_width=True)
