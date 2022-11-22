@@ -21,7 +21,7 @@ def create_maze(array):
                     "x1": j + 1,
                     "y1": i + 1,
                     "fillcolor": "#0330fc",
-                    "opacity": 0.8,
+                    "opacity": 1.0,
                     "line": {"width": 0},
                 }
                 layout["shapes"].append(shape)
