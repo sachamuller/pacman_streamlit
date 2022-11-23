@@ -1,20 +1,16 @@
 import streamlit as st
 import numpy as np
 import plotly
-from plot_pacman import create_maze
-from copy import deepcopy
-
-one = st.checkbox("Add block 1")
-two = st.checkbox("Add block 2")
-
+from plot_pacman import create_layout
+from game import Game, Action, Directions
 
 maze = np.array(
     [
         [1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 1],
-        [1, 0, two * 1, 1, 1, 1],
+        [1, 0, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 1],
-        [1, 0, one * 1, 1, 1, 1],
+        [1, 0, 0, 1, 1, 1],
         [1, 0, 0, 0, 0, 1],
         [1, 1, 1, 1, 1, 1],
     ]
@@ -22,13 +18,43 @@ maze = np.array(
 
 dots = np.array([[0 if cell == 1 else 1 for cell in line] for line in maze])
 
+game = Game(maze, dots, (1, 1))
 
-pacman_line = st.slider("Pacman line :", 0, maze.shape[0], 0)
+action_list = [
+    Action(game.pacman, Directions.up),
+    Action(game.pacman, Directions.up),
+    Action(game.pacman, Directions.right),
+    Action(game.pacman, Directions.right),
+    Action(game.pacman, Directions.right),
+    Action(game.pacman, Directions.left),
+    Action(game.pacman, Directions.left),
+    Action(game.pacman, Directions.left),
+    Action(game.pacman, Directions.up),
+    Action(game.pacman, Directions.up),
+    Action(game.pacman, Directions.right),
+    Action(game.pacman, Directions.right),
+    Action(game.pacman, Directions.right),
+    Action(game.pacman, Directions.up),
+    Action(game.pacman, Directions.left),
+    Action(game.pacman, Directions.left),
+    Action(game.pacman, Directions.down),
+    Action(game.pacman, Directions.down),
+    Action(game.pacman, Directions.left),
+    Action(game.pacman, Directions.down),
+    Action(game.pacman, Directions.down),
+    Action(game.pacman, Directions.down),
+    Action(game.pacman, Directions.right),
+    Action(game.pacman, Directions.right),
+    Action(game.pacman, Directions.right),
+    Action(game.pacman, Directions.right),
+]
 
 layout_list = []
-for pacman_line in range(0, 5):
-    for pacman_column in range(0, 5):
-        layout_list.append(create_maze(maze, pacman_line, pacman_column, dots))
+for action in action_list:
+    layout_list.append(create_layout(game))
+    game.next_state(action)
+layout_list.append(create_layout(game))
+print(layout_list[-1])
 
 frames = [
     {"name": f"{i}", "data": [], "layout": layout_list[i]}
@@ -58,7 +84,7 @@ layout = {
         }
     ]
 }
-fig = plotly.graph_objects.Figure([], layout | layout_list[0], frames)
+fig = plotly.graph_objects.Figure([], layout, frames)
 
 # Plot!
 st.plotly_chart(fig, use_container_width=True)
