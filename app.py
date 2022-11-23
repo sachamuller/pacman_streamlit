@@ -18,7 +18,7 @@ maze = np.array(
 
 dots = np.array([[0 if cell == 1 else 1 for cell in line] for line in maze])
 
-game = Game(maze, dots, (1, 1))
+game = Game(maze, dots, (1, 1), (4, 2))
 
 action_list = [
     Action(game.pacman, Directions.up),
@@ -84,7 +84,7 @@ layout = {
         }
     ]
 }
-fig = plotly.graph_objects.Figure([], layout, frames)
+fig = plotly.graph_objects.Figure([], layout | layout_list[0], frames)
 
 # Plot!
 st.plotly_chart(fig, use_container_width=True)

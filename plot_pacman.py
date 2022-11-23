@@ -15,11 +15,14 @@ def create_layout(game):
     # adding walls
     add_walls(game.maze, layout)
 
-    # adding pacman
-    add_pacman(game.pacman, layout)
-
     # adding food dots
     add_food_dots(game.dots, layout)
+
+    # adding pacman
+    for player in game.players:
+        if player != game.pacman:
+            add_ghost(player, layout)
+    add_pacman(game.pacman, layout)
 
     return layout
 
@@ -69,14 +72,15 @@ def add_food_dots(dots_array, layout, dots_size=0.1):
 
 
 def add_pacman(pacman, layout):
+    smaller = 0.75
     if pacman.orientation == Orientations.east:
-        path = f"M {0.5 + pacman.column} {0 + pacman.line} C {0.3027 + pacman.column} {0 + pacman.line} {0.132 + pacman.column} {0.1147 + pacman.line} {0.0508 + pacman.column} {0.2812 + pacman.line} L {0.5 + pacman.column} {0.5 + pacman.line} L {0.0508 + pacman.column} {0.7189 + pacman.line} C {0.132 + pacman.column} {0.8854 + pacman.line} {0.3027 + pacman.column} {1 + pacman.line} {0.5 + pacman.column} {1 + pacman.line} C {0.7764 + pacman.column} {1 + pacman.line} {1 + pacman.column} {0.7761 + pacman.line} {1 + pacman.column} {0.5 + pacman.line} S {0.7764 + pacman.column} {0 + pacman.line} {0.5 + pacman.column} {0 + pacman.line} Z"
+        path = f"M {0.5  * smaller + pacman.column + (1-smaller)/2} {0  * smaller + pacman.line + (1-smaller)/2} C {0.3027  * smaller + pacman.column + (1-smaller)/2} {0  * smaller + pacman.line + (1-smaller)/2} {0.132  * smaller + pacman.column + (1-smaller)/2} {0.1147  * smaller + pacman.line + (1-smaller)/2} {0.0508  * smaller + pacman.column + (1-smaller)/2} {0.2812  * smaller + pacman.line + (1-smaller)/2} L {0.5  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} L {0.0508  * smaller + pacman.column + (1-smaller)/2} {0.7189  * smaller + pacman.line + (1-smaller)/2} C {0.132  * smaller + pacman.column + (1-smaller)/2} {0.8854  * smaller + pacman.line + (1-smaller)/2} {0.3027  * smaller + pacman.column + (1-smaller)/2} {1  * smaller + pacman.line + (1-smaller)/2} {0.5  * smaller + pacman.column + (1-smaller)/2} {1  * smaller + pacman.line + (1-smaller)/2} C {0.7764  * smaller + pacman.column + (1-smaller)/2} {1  * smaller + pacman.line + (1-smaller)/2} {1  * smaller + pacman.column + (1-smaller)/2} {0.7761  * smaller + pacman.line + (1-smaller)/2} {1  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} S {0.7764  * smaller + pacman.column + (1-smaller)/2} {0  * smaller + pacman.line + (1-smaller)/2} {0.5  * smaller + pacman.column + (1-smaller)/2} {0  * smaller + pacman.line + (1-smaller)/2} Z"
     elif pacman.orientation == Orientations.west:
-        path = f"M {0.5 + pacman.column} {1 + pacman.line} C {0.6974 + pacman.column} {1 + pacman.line} {0.8681 + pacman.column} {0.8857 + pacman.line} {0.9492 + pacman.column} {0.7192 + pacman.line} L {0.5 + pacman.column} {0.5 + pacman.line} L {0.9492 + pacman.column} {0.2811 + pacman.line} C {0.8685 + pacman.column} {0.115 + pacman.line} {0.6974 + pacman.column} {0 + pacman.line} {0.5 + pacman.column} {0 + pacman.line} C {0.2237 + pacman.column} {0 + pacman.line} {0 + pacman.column} {0.2243 + pacman.line} {0 + pacman.column} {0.5 + pacman.line} S {0.224 + pacman.column} {1 + pacman.line} {0.5 + pacman.column} {1 + pacman.line} Z"
+        path = f"M {0.5  * smaller + pacman.column + (1-smaller)/2} {1  * smaller + pacman.line + (1-smaller)/2} C {0.6974  * smaller + pacman.column + (1-smaller)/2} {1  * smaller + pacman.line + (1-smaller)/2} {0.8681  * smaller + pacman.column + (1-smaller)/2} {0.8857  * smaller + pacman.line + (1-smaller)/2} {0.9492  * smaller + pacman.column + (1-smaller)/2} {0.7192  * smaller + pacman.line + (1-smaller)/2} L {0.5  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} L {0.9492  * smaller + pacman.column + (1-smaller)/2} {0.2811  * smaller + pacman.line + (1-smaller)/2} C {0.8685  * smaller + pacman.column + (1-smaller)/2} {0.115  * smaller + pacman.line + (1-smaller)/2} {0.6974  * smaller + pacman.column + (1-smaller)/2} {0  * smaller + pacman.line + (1-smaller)/2} {0.5  * smaller + pacman.column + (1-smaller)/2} {0  * smaller + pacman.line + (1-smaller)/2} C {0.2237  * smaller + pacman.column + (1-smaller)/2} {0  * smaller + pacman.line + (1-smaller)/2} {0  * smaller + pacman.column + (1-smaller)/2} {0.2243  * smaller + pacman.line + (1-smaller)/2} {0  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} S {0.224  * smaller + pacman.column + (1-smaller)/2} {1  * smaller + pacman.line + (1-smaller)/2} {0.5  * smaller + pacman.column + (1-smaller)/2} {1  * smaller + pacman.line + (1-smaller)/2} Z"
     elif pacman.orientation == Orientations.south:
-        path = f"M {1 + pacman.column} {0.5 + pacman.line} C {1 + pacman.column} {0.3024 + pacman.line} {0.8853 + pacman.column} {0.1316 + pacman.line} {0.7188 + pacman.column} {0.0504 + pacman.line} L {0.5 + pacman.column} {0.5 + pacman.line} L {0.2809 + pacman.column} {0.0504 + pacman.line} C {0.1 + pacman.column} {0.1316 + pacman.line} {0 + pacman.column} {0.3024 + pacman.line} {0 + pacman.column} {0.5 + pacman.line} C {0 + pacman.column} {0.7763 + pacman.line} {0.2237 + pacman.column} {1 + pacman.line} {0.5 + pacman.column} {1 + pacman.line} S {1 + pacman.column} {0.7759 + pacman.line} {1 + pacman.column} {0.5 + pacman.line} Z"
+        path = f"M {1  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} C {1  * smaller + pacman.column + (1-smaller)/2} {0.3024  * smaller + pacman.line + (1-smaller)/2} {0.8853  * smaller + pacman.column + (1-smaller)/2} {0.1316  * smaller + pacman.line + (1-smaller)/2} {0.7188  * smaller + pacman.column + (1-smaller)/2} {0.0504  * smaller + pacman.line + (1-smaller)/2} L {0.5  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} L {0.2809  * smaller + pacman.column + (1-smaller)/2} {0.0504  * smaller + pacman.line + (1-smaller)/2} C {0.1  * smaller + pacman.column + (1-smaller)/2} {0.1316  * smaller + pacman.line + (1-smaller)/2} {0  * smaller + pacman.column + (1-smaller)/2} {0.3024  * smaller + pacman.line + (1-smaller)/2} {0  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} C {0  * smaller + pacman.column + (1-smaller)/2} {0.7763  * smaller + pacman.line + (1-smaller)/2} {0.2237  * smaller + pacman.column + (1-smaller)/2} {1  * smaller + pacman.line + (1-smaller)/2} {0.5  * smaller + pacman.column + (1-smaller)/2} {1  * smaller + pacman.line + (1-smaller)/2} S {1  * smaller + pacman.column + (1-smaller)/2} {0.7759  * smaller + pacman.line + (1-smaller)/2} {1  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} Z"
     elif pacman.orientation == Orientations.north:
-        path = f"M {0 + pacman.column} {0.5 + pacman.line} C {0 + pacman.column} {0.6971 + pacman.line} {0.1146 + pacman.column} {0.8678 + pacman.line} {0.2811 + pacman.column} {0.9489 + pacman.line} L {0.5 + pacman.column} {0.5 + pacman.line} L {0.719 + pacman.column} {0.9489 + pacman.line} C {0.8854 + pacman.column} {0.8678 + pacman.line} {1 + pacman.column} {0.6971 + pacman.line} {1 + pacman.column} {0.5 + pacman.line} C {1 + pacman.column} {0.2236 + pacman.line} {0.7761 + pacman.column} {0 + pacman.line} {0.5 + pacman.column} {0 + pacman.line} S {0 + pacman.column} {0.2239 + pacman.line} {0 + pacman.column} {0.5 + pacman.line} Z"
+        path = f"M {0  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} C {0  * smaller + pacman.column + (1-smaller)/2} {0.6971  * smaller + pacman.line + (1-smaller)/2} {0.1146  * smaller + pacman.column + (1-smaller)/2} {0.8678  * smaller + pacman.line + (1-smaller)/2} {0.2811  * smaller + pacman.column + (1-smaller)/2} {0.9489  * smaller + pacman.line + (1-smaller)/2} L {0.5  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} L {0.719  * smaller + pacman.column + (1-smaller)/2} {0.9489  * smaller + pacman.line + (1-smaller)/2} C {0.8854  * smaller + pacman.column + (1-smaller)/2} {0.8678  * smaller + pacman.line + (1-smaller)/2} {1  * smaller + pacman.column + (1-smaller)/2} {0.6971  * smaller + pacman.line + (1-smaller)/2} {1  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} C {1  * smaller + pacman.column + (1-smaller)/2} {0.2236  * smaller + pacman.line + (1-smaller)/2} {0.7761  * smaller + pacman.column + (1-smaller)/2} {0  * smaller + pacman.line + (1-smaller)/2} {0.5  * smaller + pacman.column + (1-smaller)/2} {0  * smaller + pacman.line + (1-smaller)/2} S {0  * smaller + pacman.column + (1-smaller)/2} {0.2239  * smaller + pacman.line + (1-smaller)/2} {0  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} Z"
     pacman = {
         "type": "path",
         "path": path,
@@ -84,3 +88,15 @@ def add_pacman(pacman, layout):
         "line": {"width": 0},
     }
     layout["shapes"].append(pacman)
+
+
+def add_ghost(ghost, layout):
+    smaller = 0.75
+    path = f"M  {1.0* smaller + ghost.column + (1-smaller)/2}  {0.5* smaller + ghost.line + (1-smaller)/2} L  {1.0* smaller + ghost.column + (1-smaller)/2}  {0.0* smaller + ghost.line + (1-smaller)/2} L  {0.8334* smaller + ghost.column + (1-smaller)/2}  {0.19999999999999996* smaller + ghost.line + (1-smaller)/2} L  {0.6667000000000001* smaller + ghost.column + (1-smaller)/2}  {0.0* smaller + ghost.line + (1-smaller)/2} L  {0.5* smaller + ghost.column + (1-smaller)/2}  {0.19999999999999996* smaller + ghost.line + (1-smaller)/2} L  {0.33399999999999996* smaller + ghost.column + (1-smaller)/2}  {0.0* smaller + ghost.line + (1-smaller)/2} L  {0.16669999999999996* smaller + ghost.column + (1-smaller)/2}  {0.19999999999999996* smaller + ghost.line + (1-smaller)/2} L  {0.0* smaller + ghost.column + (1-smaller)/2}  {0.0* smaller + ghost.line + (1-smaller)/2} L  {0.0* smaller + ghost.column + (1-smaller)/2}  {0.5* smaller + ghost.line + (1-smaller)/2} C  {0.0* smaller + ghost.column + (1-smaller)/2}  {0.7764* smaller + ghost.line + (1-smaller)/2}  {0.2239* smaller + ghost.column + (1-smaller)/2}  {1.0* smaller + ghost.line + (1-smaller)/2}  {0.5* smaller + ghost.column + (1-smaller)/2}  {1.0* smaller + ghost.line + (1-smaller)/2} S  {1.0* smaller + ghost.column + (1-smaller)/2}  {0.7761* smaller + ghost.line + (1-smaller)/2}  {1.0* smaller + ghost.column + (1-smaller)/2}  {0.5* smaller + ghost.line + (1-smaller)/2} Z"
+    ghost = {
+        "type": "path",
+        "path": path,
+        "fillcolor": ghost.color,
+        "line": {"width": 0},
+    }
+    layout["shapes"].append(ghost)

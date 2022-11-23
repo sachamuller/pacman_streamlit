@@ -26,11 +26,11 @@ class Action:
 
 
 class Game:
-    def __init__(self, maze, dots, pacman_position):
+    def __init__(self, maze, dots, pacman_position, ghost_position):
         self.maze = maze
         self.dots = dots
         self.pacman = Pacman(pacman_position)
-        self.players = [self.pacman]
+        self.players = [self.pacman, Ghost(0, position=ghost_position)]
         self.update_dots()
 
     def next_state(self, action):
@@ -86,8 +86,14 @@ class Pacman(Player):
 
 class Ghost(Player):
     def __init__(
-        self, id=0, position=(0, 0), orientation=Orientations.east, alive=True
+        self,
+        id=0,
+        position=(0, 0),
+        orientation=Orientations.east,
+        alive=True,
+        color="red",
     ):
         super().__init__(f"Ghost {id}", position, orientation, alive)
         self.is_zombie = False
         self.zombie_timer = -1
+        self.color = color
