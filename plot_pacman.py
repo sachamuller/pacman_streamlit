@@ -24,6 +24,8 @@ def create_layout(game):
             add_ghost(player, layout)
     add_pacman(game.pacman, layout)
 
+    add_game_over(game.game_over, layout)
+
     return layout
 
 
@@ -81,13 +83,13 @@ def add_pacman(pacman, layout):
         path = f"M {1  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} C {1  * smaller + pacman.column + (1-smaller)/2} {0.3024  * smaller + pacman.line + (1-smaller)/2} {0.8853  * smaller + pacman.column + (1-smaller)/2} {0.1316  * smaller + pacman.line + (1-smaller)/2} {0.7188  * smaller + pacman.column + (1-smaller)/2} {0.0504  * smaller + pacman.line + (1-smaller)/2} L {0.5  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} L {0.2809  * smaller + pacman.column + (1-smaller)/2} {0.0504  * smaller + pacman.line + (1-smaller)/2} C {0.1  * smaller + pacman.column + (1-smaller)/2} {0.1316  * smaller + pacman.line + (1-smaller)/2} {0  * smaller + pacman.column + (1-smaller)/2} {0.3024  * smaller + pacman.line + (1-smaller)/2} {0  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} C {0  * smaller + pacman.column + (1-smaller)/2} {0.7763  * smaller + pacman.line + (1-smaller)/2} {0.2237  * smaller + pacman.column + (1-smaller)/2} {1  * smaller + pacman.line + (1-smaller)/2} {0.5  * smaller + pacman.column + (1-smaller)/2} {1  * smaller + pacman.line + (1-smaller)/2} S {1  * smaller + pacman.column + (1-smaller)/2} {0.7759  * smaller + pacman.line + (1-smaller)/2} {1  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} Z"
     elif pacman.orientation == Orientations.north:
         path = f"M {0  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} C {0  * smaller + pacman.column + (1-smaller)/2} {0.6971  * smaller + pacman.line + (1-smaller)/2} {0.1146  * smaller + pacman.column + (1-smaller)/2} {0.8678  * smaller + pacman.line + (1-smaller)/2} {0.2811  * smaller + pacman.column + (1-smaller)/2} {0.9489  * smaller + pacman.line + (1-smaller)/2} L {0.5  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} L {0.719  * smaller + pacman.column + (1-smaller)/2} {0.9489  * smaller + pacman.line + (1-smaller)/2} C {0.8854  * smaller + pacman.column + (1-smaller)/2} {0.8678  * smaller + pacman.line + (1-smaller)/2} {1  * smaller + pacman.column + (1-smaller)/2} {0.6971  * smaller + pacman.line + (1-smaller)/2} {1  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} C {1  * smaller + pacman.column + (1-smaller)/2} {0.2236  * smaller + pacman.line + (1-smaller)/2} {0.7761  * smaller + pacman.column + (1-smaller)/2} {0  * smaller + pacman.line + (1-smaller)/2} {0.5  * smaller + pacman.column + (1-smaller)/2} {0  * smaller + pacman.line + (1-smaller)/2} S {0  * smaller + pacman.column + (1-smaller)/2} {0.2239  * smaller + pacman.line + (1-smaller)/2} {0  * smaller + pacman.column + (1-smaller)/2} {0.5  * smaller + pacman.line + (1-smaller)/2} Z"
-    pacman = {
+    pacman_shape = {
         "type": "path",
         "path": path,
         "fillcolor": "yellow",
         "line": {"width": 0},
     }
-    layout["shapes"].append(pacman)
+    layout["shapes"].append(pacman_shape)
 
 
 def add_ghost(ghost, layout):
@@ -100,3 +102,29 @@ def add_ghost(ghost, layout):
         "line": {"width": 0},
     }
     layout["shapes"].append(ghost)
+
+
+def add_game_over(game_over, layout):
+    if game_over:
+        text = "GAME OVER"
+        bgcolor = "rgba(0, 0, 0, 0.5)"
+    else:
+        # once again animations work better when the elements exist on all frames and are modified
+        text = ""
+        bgcolor = "rgba(0, 0, 0, 0)"
+
+    layout["annotations"] = [
+        {
+            "xref": "paper",
+            "yref": "paper",
+            "x": 0.5,
+            "xanchor": "center",
+            "y": 0.5,
+            "yanchor": "middle",
+            "text": text,
+            "showarrow": False,
+            "font": {"size": 50},
+            "bgcolor": bgcolor,
+            "borderpad": max(layout["height"], layout["width"]),
+        }
+    ]

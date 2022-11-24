@@ -18,11 +18,13 @@ maze = np.array(
 
 dots = np.array([[0 if cell == 1 else 1 for cell in line] for line in maze])
 
-game = Game(maze, dots, (1, 1), (4, 2))
+game = Game(maze, dots, (1, 1), [(4, 2)])
 
 action_list = [
     Action(game.pacman, Directions.up),
+    # Action(game.players[1], Directions.left),
     Action(game.pacman, Directions.up),
+    # Action(game.players[1], Directions.down),
     Action(game.pacman, Directions.right),
     Action(game.pacman, Directions.right),
     Action(game.pacman, Directions.right),
@@ -54,7 +56,6 @@ for action in action_list:
     layout_list.append(create_layout(game))
     game.next_state(action)
 layout_list.append(create_layout(game))
-print(layout_list[-1])
 
 frames = [
     {"name": f"{i}", "data": [], "layout": layout_list[i]}
