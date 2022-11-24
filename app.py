@@ -3,6 +3,14 @@ import numpy as np
 import plotly
 from plot_pacman import create_layout
 from game import Game, Action, Directions
+from heuristics import ghost_heuristic, pacman_heuristic
+
+max_number = st.slider(
+    "Max number of turns",
+    min_value=0,
+    max_value=3000,
+    value=50,
+)
 
 maze = np.array(
     [
@@ -15,61 +23,12 @@ maze = np.array(
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
 )
-maze = np.array(
-    [
-        [1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 1, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1],
-    ]
-)
 
 dots = np.array([[0 if cell == 1 else 1 for cell in line] for line in maze])
 
-game = Game(maze, dots, (1, 1), [(4, 2)])
+game = Game(maze, dots, (1, 1), [(4, 2)], pacman_heuristic, [ghost_heuristic])
 
-action_list = [
-    Action(game.pacman, Directions.up),
-    # Action(game.players[1], Directions.left),
-    Action(game.pacman, Directions.up),
-    # Action(game.players[1], Directions.down),
-    Action(game.pacman, Directions.right),
-    Action(game.pacman, Directions.right),
-    Action(game.pacman, Directions.right),
-    Action(game.pacman, Directions.left),
-    Action(game.pacman, Directions.left),
-    Action(game.pacman, Directions.left),
-    Action(game.pacman, Directions.up),
-    Action(game.pacman, Directions.up),
-    Action(game.pacman, Directions.right),
-    Action(game.pacman, Directions.right),
-    Action(game.pacman, Directions.right),
-    Action(game.pacman, Directions.up),
-    Action(game.pacman, Directions.left),
-    Action(game.pacman, Directions.left),
-    Action(game.pacman, Directions.down),
-    Action(game.pacman, Directions.down),
-    Action(game.pacman, Directions.left),
-    Action(game.pacman, Directions.down),
-    Action(game.pacman, Directions.down),
-    Action(game.pacman, Directions.down),
-    Action(game.pacman, Directions.right),
-    Action(game.pacman, Directions.right),
-    Action(game.pacman, Directions.right),
-    Action(game.pacman, Directions.right),
-]
-
-layout_list = []
-for action in action_list:
-    layout_list.append(create_layout(game))
-    game.next_state(action)
-layout_list.append(create_layout(game))
+layout_list = game.run_and_get_layout(max_number)
 
 frames = [
     {"name": f"{i}", "data": [], "layout": layout_list[i]}
@@ -92,10 +51,6 @@ sliderSteps = [
     for i in range(len(layout_list))
 ]
 expand = 80
-print(
-    game.maze.shape[1] * expand,
-    game.maze.shape[0] * expand,
-)
 layout = {
     "height": game.maze.shape[0] * expand,
     "width": game.maze.shape[1] * expand,

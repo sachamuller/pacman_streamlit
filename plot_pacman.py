@@ -1,4 +1,4 @@
-from game import Orientations
+from utils import Orientations
 
 
 def create_layout(game):
@@ -21,7 +21,7 @@ def create_layout(game):
             add_ghost(player, layout)
     add_pacman(game.pacman, layout)
 
-    add_game_over(game.game_over, layout)
+    add_game_over_or_game_won(game.game_over, game.game_won, layout)
 
     return layout
 
@@ -101,9 +101,12 @@ def add_ghost(ghost, layout):
     layout["shapes"].append(ghost)
 
 
-def add_game_over(game_over, layout):
+def add_game_over_or_game_won(game_over, game_won, layout):
     if game_over:
         text = "GAME OVER"
+        bgcolor = "rgba(0, 0, 0, 0.5)"
+    elif game_won:
+        text = "YOU WON !"
         bgcolor = "rgba(0, 0, 0, 0.5)"
     else:
         # once again animations work better when the elements exist on all frames and are modified

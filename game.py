@@ -1,53 +1,53 @@
+from copy import deepcopy
 import numpy as np
-from enum import Enum
-
-
-class Orientations(Enum):
-    north = "north"
-    south = "south"
-    west = "west"
-    east = "east"
-
-
-class Directions(Enum):
-    up = "up"
-    down = "down"
-    left = "left"
-    right = "right"
-
-
-class Action:
-    def __init__(self, player, direction: Directions):
-        self.player = player
-        self.direction = direction
-
-    def __repr__(self) -> str:
-        return f"{self.player.name} : {self.direction.name}"
+from alphabeta import get_action_with_minimax_alphabeta
+from utils import Orientations, Directions, Action
+from plot_pacman import create_layout
 
 
 class Game:
-    def __init__(self, maze, dots, pacman_position, ghost_positions):
+    def __init__(
+        self,
+        maze,
+        dots,
+        pacman_position,
+        ghosts_positions,
+        pacman_heuristic,
+        ghosts_heuristics,
+    ):
         self.maze = maze
         self.dots = dots
-        self.pacman = Pacman(pacman_position)
+
+        self.pacman = Pacman(pacman_position, heuristic=pacman_heuristic)
         self.ghosts = [
-            Ghost(i, ghost_positions[i]) for i in range(len(ghost_positions))
+            Ghost(i + 1, ghosts_positions[i], heuristic=ghosts_heuristics[i])
+            for i in range(len(ghosts_positions))
         ]
+        self.ghosts_heuristics = ghosts_heuristics
         self.players = [self.pacman] + self.ghosts
+
         self.game_over = False
+        self.game_won = False
+
+        # Check game is valid and update some things if necessary
         self.check_players_names_are_unique()
         self.update_dots()
         self.update_aliveness()
-        self.is_game_over()
+        self.is_game_over_or_won()
 
     def next_state(self, action):
-        if not self.game_over:
+        if not self.game_over or not self.game_won:
             for player in self.players:
-                if player == action.player:
+                if player.name == action.player.name:
                     player.next(action, self.maze)
             self.update_dots()
             self.update_aliveness()
-            self.is_game_over()
+            self.is_game_over_or_won()
+
+    def project_next_state(self, action):
+        game_copy = deepcopy(self)
+        game_copy.next_state(action)
+        return game_copy
 
     def check_players_names_are_unique(self):
         for i, player in enumerate(self.players):
@@ -64,18 +64,73 @@ class Game:
         for ghost in self.ghosts:
             ghost.is_still_alive(self.pacman)
 
-    def is_game_over(self):
+    def is_game_over_or_won(self):
         if not self.pacman.alive:
             self.game_over = True
+        elif self.dots.sum() == 0:
+            self.game_won = True
+
+    def get_legal_directions(self, player_name):
+        player = [p for p in self.players if p.name == player_name][0]
+        available_actions = []  # [Directions.stay]
+        if not self.maze[player.line + 1][player.column]:
+            available_actions.append(Directions.up)
+        if not self.maze[player.line - 1][player.column]:
+            available_actions.append(Directions.down)
+        if not self.maze[player.line][player.column + 1]:
+            available_actions.append(Directions.right)
+        if not self.maze[player.line][player.column - 1]:
+            available_actions.append(Directions.left)
+        return available_actions
+
+    def run_and_get_layout(self, max_turns=None):
+        list_layout = [create_layout(self)]
+        count_turns = 0
+        while (
+            not self.game_over
+            and not self.game_won
+            and (max_turns is not None and count_turns < max_turns)
+        ):
+            for player in self.players:
+                action = get_action_with_minimax_alphabeta(self, player, self.players)
+                print(action)
+                self.next_state(action)
+                list_layout.append(create_layout(self))
+                count_turns += 1
+        return list_layout
+
+    def __repr__(self) -> str:
+        result = ""
+        for i in range(len(self.maze)):
+            for j in range(len(self.maze[i])):
+                done = False
+                if self.maze[i][j]:
+                    result += "X"
+                    done = True
+                if self.pacman.line == i and self.pacman.column == j and not done:
+                    result += "P"
+                    done = True
+                for ghost in self.ghosts:
+                    if ghost.line == i and ghost.column == j and not done:
+                        result += "G"
+                        done = True
+                if self.dots[i][j] and not done:
+                    result += "."
+                    done = True
+                if not done:
+                    result += " "
+            result += "\n"
+        return result
 
 
 class Player:
-    def __init__(self, name, position, orientation, alive):
+    def __init__(self, name, position, orientation, alive, heuristic):
         self.name = name
         self.line = position[0]
         self.column = position[1]
         self.orientation = orientation
         self.alive = alive
+        self.heuristic = heuristic
 
     def next(self, action, maze):
         self.next_position(action, maze)
@@ -93,15 +148,16 @@ class Player:
             self.column += 1
         if action.direction == Directions.left and not maze[self.line][self.column - 1]:
             self.column -= 1
+        # if stay, on ne fait rien
 
     def next_orientation(self, action):
-        if action.direction.name == "up":
+        if action.direction == Directions.up:
             self.orientation = Orientations.north
-        if action.direction.name == "down":
+        if action.direction == Directions.down:
             self.orientation = Orientations.south
-        if action.direction.name == "right":
+        if action.direction == Directions.right:
             self.orientation = Orientations.west
-        if action.direction.name == "left":
+        if action.direction == Directions.left:
             self.orientation = Orientations.east
 
     def is_still_alive(self, ghosts, pacman):
@@ -109,8 +165,10 @@ class Player:
 
 
 class Pacman(Player):
-    def __init__(self, position=(0, 0), orientation=Orientations.west, alive=True):
-        super().__init__("Pacman", position, orientation, alive)
+    def __init__(
+        self, position, orientation=Orientations.west, alive=True, heuristic=None
+    ):
+        super().__init__(0, position, orientation, alive, heuristic)
 
     def is_still_alive(self, ghosts):
         for ghost in ghosts:
@@ -125,9 +183,10 @@ class Ghost(Player):
         position=(0, 0),
         orientation=Orientations.east,
         alive=True,
+        heuristic=None,
         color="red",
     ):
-        super().__init__(f"Ghost {id}", position, orientation, alive)
+        super().__init__(id, position, orientation, alive, heuristic)
         self.is_zombie = False
         self.zombie_timer = -1
         self.color = color
