@@ -3,12 +3,9 @@ from game import Orientations
 
 def create_layout(game):
     expand = 100
+    width = 1000
     layout = {
         "shapes": [],
-        "height": (game.maze.shape[0]) * expand,
-        "width": (game.maze.shape[1]) * expand,
-        "xaxis": {"range": [0, game.maze.shape[1]], "visible": False},
-        "yaxis": {"range": [0, game.maze.shape[0]], "visible": False},
         "plot_bgcolor": "black",
     }
 
@@ -125,6 +122,6 @@ def add_game_over(game_over, layout):
             "showarrow": False,
             "font": {"size": 50},
             "bgcolor": bgcolor,
-            "borderpad": max(layout["height"], layout["width"]),
+            # "borderpad": max(layout["height"], layout["width"]),
         }
     ]

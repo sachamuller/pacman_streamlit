@@ -6,13 +6,27 @@ from game import Game, Action, Directions
 
 maze = np.array(
     [
-        [1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 1],
-        [1, 0, 0, 1, 1, 1],
-        [1, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ]
+)
+maze = np.array(
+    [
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1],
     ]
 )
 
@@ -77,13 +91,26 @@ sliderSteps = [
     }
     for i in range(len(layout_list))
 ]
-
+expand = 80
+print(
+    game.maze.shape[1] * expand,
+    game.maze.shape[0] * expand,
+)
 layout = {
+    "height": game.maze.shape[0] * expand,
+    "width": game.maze.shape[1] * expand,
+    "xaxis": {"range": [0, game.maze.shape[1]], "visible": False},
+    "yaxis": {
+        "range": [0, game.maze.shape[0]],
+        "scaleanchor": "x",
+        "scaleratio": 1,
+        "visible": False,
+    },
     "sliders": [
         {
             "steps": sliderSteps,
         }
-    ]
+    ],
 }
 fig = plotly.graph_objects.Figure([], layout | layout_list[0], frames)
 
