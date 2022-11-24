@@ -1,4 +1,5 @@
 from enum import Enum
+from math import sqrt
 
 
 class Orientations(Enum):
@@ -25,7 +26,25 @@ class Action:
         return f"{self.player.name} : {self.direction.name}"
 
 
-def manhattan_distance(player, other_player):
-    return abs(player.line - other_player.line) + abs(
-        player.column - other_player.column
+def manhattan_distance(a, b):
+    xa, ya = a
+    xb, yb = b
+    return abs(xa - xb) + abs(ya - yb)
+
+
+def manhattan_distance_between_players(player, other_player):
+    return manhattan_distance(
+        (player.line, player.column), (other_player.line, other_player.column)
+    )
+
+
+def euclidean_distance(a, b):
+    xa, ya = a
+    xb, yb = b
+    return sqrt((xa - xb) ** 2 + (ya - yb) ** 2)
+
+
+def euclidean_distance_between_players(player, other_player):
+    return euclidean_distance(
+        (player.line, player.column), (other_player.line, other_player.column)
     )

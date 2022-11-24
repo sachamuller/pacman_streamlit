@@ -1,9 +1,9 @@
 import streamlit as st
 import numpy as np
 import plotly
-from plot_pacman import create_layout
-from game import Game, Action, Directions
+from game import Game
 from heuristics import ghost_heuristic, pacman_heuristic
+from mazes import mazes_dict
 
 max_number = st.slider(
     "Max number of turns",
@@ -12,17 +12,8 @@ max_number = st.slider(
     value=50,
 )
 
-maze = np.array(
-    [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ]
-)
+maze = mazes_dict[st.selectbox("Maze :", mazes_dict.keys())]
+
 
 dots = np.array([[0 if cell == 1 else 1 for cell in line] for line in maze])
 
