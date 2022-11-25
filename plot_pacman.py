@@ -1,4 +1,6 @@
 from utils import Orientations
+import plotly
+from mazes import expand_dict
 
 
 def create_layout(game):
@@ -128,3 +130,78 @@ def add_game_over_or_game_won(game_over, game_won, layout):
             # "borderpad": max(layout["height"], layout["width"]),
         }
     ]
+
+
+def get_fig_from_layout_list(layout_list, game, maze_name):
+    frames = [
+        {"name": f"{i}", "data": [], "layout": layout_list[i]}
+        for i in range(len(layout_list))
+    ]
+
+    sliderSteps = [
+        {
+            "method": "animate",
+            "label": f"{i}",
+            "args": [
+                [f"{i}"],
+                {
+                    "mode": "immediate",
+                    "transition": {"duration": 0},
+                    "frame": {"duration": 0, "redraw": False},  # TODO
+                },
+            ],
+        }
+        for i in range(len(layout_list))
+    ]
+    expand = expand_dict[maze_name]
+    layout = {
+        "height": game.maze.shape[0] * expand,
+        "width": game.maze.shape[1] * expand,
+        "xaxis": {"range": [0, game.maze.shape[1]], "visible": False},
+        "yaxis": {
+            "range": [0, game.maze.shape[0]],
+            "scaleanchor": "x",
+            "scaleratio": 1,
+            "visible": False,
+        },
+        "updatemenus": [
+            {
+                "showactive": False,
+                "type": "buttons",
+                "buttons": [
+                    {
+                        "method": "animate",
+                        "args": [
+                            None,
+                            {
+                                "mode": "immediate",
+                                "fromcurrent": "true",
+                                "transition": {"duration": 0},
+                                "frame": {"duration": 50, "redraw": False},  # TODO
+                            },
+                        ],
+                        "label": "Play",
+                    },
+                    {
+                        "method": "animate",
+                        "args": [
+                            [None],
+                            {
+                                "mode": "immediate",
+                                "transition": {"duration": 0},
+                                "frame": {"duration": 0, "redraw": False},  # TODO
+                            },
+                        ],
+                        "label": "Pause",
+                    },
+                ],
+            }
+        ],
+        "sliders": [
+            {
+                "steps": sliderSteps,
+            }
+        ],
+    }
+    fig = plotly.graph_objects.Figure([], layout | layout_list[0], frames)
+    return fig

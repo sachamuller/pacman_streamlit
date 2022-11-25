@@ -1,15 +1,13 @@
 import streamlit as st
-import plotly
 from game import Game
-from heuristics import pacman_heuristic, ghost_bfs
-from mazes import game_board_dict, expand_dict
+from heuristics import ghost_bfs
+from mazes import game_board_dict
 from alphabeta import get_action_with_minimax_alphabeta
 from random import choice
 from utils import Action
-from time import time
+from plot_pacman import get_fig_from_layout_list
 
-print("RERUN")
-tic = time()
+st.title("Playing Pac-Man with Minimax")
 
 max_number = st.slider(
     "Max number of turns",
@@ -17,71 +15,45 @@ max_number = st.slider(
     max_value=3000,
     value=200,
 )
+
 maze_name = st.selectbox("Maze :", game_board_dict.keys())
 game_board = game_board_dict[maze_name]
 
-game = Game(game_board, None, [None])
-game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
-    game, pacman_heuristic, game.pacman, game.players
+
+heuristic_text = st.text_area(
+    "def my_heuristic(game):",
+    """    return -game.dots.sum()""",
 )
-# Random ghost :
-game.ghosts[0].strategy = lambda game: Action(
-    game.ghosts[0], choice(game.get_legal_directions(game.ghosts[0].name))
+
+ghost_difficulty = st.radio(
+    "Ghost difficulty", options=["random", "clever"], horizontal=True
 )
-# # Clever ghost :
-# game.ghosts[0].strategy = lambda game: Action(
-#     game.ghosts[0], ghost_bfs(game.ghosts[0], game)
-# )
 
-layout_list = game.run_and_get_layout(max_number)
-tac = time()
-print("GAME RAN :", tac - tic)
+if st.button("Compute game"):
+    game = Game(game_board, None, [None])
 
-frames = [
-    {"name": f"{i}", "data": [], "layout": layout_list[i]}
-    for i in range(len(layout_list))
-]
+    heuristic_text = "global my_heuristic\ndef my_heuristic(game):\n" + heuristic_text
+    print("HEHO")
+    print(heuristic_text)
+    exec(heuristic_text)
+    # my_heuristic is marked as undefined in VS code but it is not as we retrieve its value
+    # when we exec the test containing its definition !
+    game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
+        game, my_heuristic, game.pacman, game.players
+    )
 
-sliderSteps = [
-    {
-        "method": "animate",
-        "label": f"{i}",
-        "args": [
-            [f"{i}"],
-            {
-                "mode": "immediate",
-                "transition": {"duration": 0},
-                "frame": {"duration": 0, "redraw": "true"},
-            },
-        ],
-    }
-    for i in range(len(layout_list))
-]
-expand = expand_dict[maze_name]
-layout = {
-    "height": game.maze.shape[0] * expand,
-    "width": game.maze.shape[1] * expand,
-    "xaxis": {"range": [0, game.maze.shape[1]], "visible": False},
-    "yaxis": {
-        "range": [0, game.maze.shape[0]],
-        "scaleanchor": "x",
-        "scaleratio": 1,
-        "visible": False,
-    },
-    "sliders": [
-        {
-            "steps": sliderSteps,
-        }
-    ],
-}
-tuc = time()
-print("LAYOUT COMPUTED :", tuc - tac)
-fig = plotly.graph_objects.Figure([], layout | layout_list[0], frames)
-tec = time()
-print("GIFURE COMPUTED :", tec - tuc)
+    if ghost_difficulty == "random":
+        game.ghosts[0].strategy = lambda game: Action(
+            game.ghosts[0], choice(game.get_legal_directions(game.ghosts[0].name))
+        )
+    if ghost_difficulty == "clever":
+        game.ghosts[0].strategy = lambda game: Action(
+            game.ghosts[0], ghost_bfs(game.ghosts[0], game)
+        )
 
+    layout_list = game.run_and_get_layout(max_number)
 
-# Plot!
-st.plotly_chart(fig, use_container_width=True)
-toc = time()
-print("PLOTTED ON STREAMLIT :", toc - tec)
+    fig = get_fig_from_layout_list(layout_list, game, maze_name)
+
+    # Plot!
+    st.plotly_chart(fig, use_container_width=True)
