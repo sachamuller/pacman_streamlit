@@ -87,7 +87,6 @@ class Game:
         ):
             for player in self.players:
                 action = player.strategy(self)
-                print(action)
                 self.next_state(action)
                 list_layout.append(create_layout(self))
                 count_turns += 1
