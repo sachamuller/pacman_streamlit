@@ -3,10 +3,12 @@ import numpy as np
 import plotly
 from game import Game
 from heuristics import pacman_heuristic, ghost_bfs
-from mazes import mazes_dict
+from mazes import game_board_dict, expand_dict
 from alphabeta import get_action_with_minimax_alphabeta
 from random import choice
 from utils import Action
+
+print("RERUN")
 
 max_number = st.slider(
     "Max number of turns",
@@ -14,13 +16,10 @@ max_number = st.slider(
     max_value=3000,
     value=50,
 )
+maze_name = st.selectbox("Maze :", game_board_dict.keys())
+game_board = game_board_dict[maze_name]
 
-maze = mazes_dict[st.selectbox("Maze :", mazes_dict.keys())]
-
-
-dots = np.array([[0 if cell == 1 else 1 for cell in line] for line in maze])
-
-game = Game(maze, dots, (1, 1), [(4, 2)], None, [None])
+game = Game(game_board, None, [None])
 game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
     game, pacman_heuristic, game.pacman, game.players
 )
@@ -56,7 +55,7 @@ sliderSteps = [
     }
     for i in range(len(layout_list))
 ]
-expand = 80
+expand = expand_dict[maze_name]
 layout = {
     "height": game.maze.shape[0] * expand,
     "width": game.maze.shape[1] * expand,

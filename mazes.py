@@ -1,8 +1,22 @@
 import numpy as np
 
 
-def flip_mazes_horizontally(maze):
-    return np.flip(maze, 0)
+class GameBoard:
+    def __init__(
+        self, maze, dots, pacman_start, ghost_start, flip_maze=True, flip_dots=True
+    ):
+        self.maze = maze
+        self.dots = dots
+        self.pacman_start = pacman_start
+        self.ghost_start = ghost_start
+        if flip_maze:
+            self.maze = flip_array_horizontally(self.maze)
+        if flip_dots:
+            self.dots = flip_array_horizontally(self.dots)
+
+
+def flip_array_horizontally(array):
+    return np.flip(array, 0)
 
 
 test_maze = np.array(
@@ -16,7 +30,14 @@ test_maze = np.array(
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
 )
-test_maze = flip_mazes_horizontally(test_maze)
+test_game_board = GameBoard(
+    test_maze,
+    np.array([[0 if cell == 1 else 1 for cell in line] for line in test_maze]),
+    (1, 1),
+    [(4, 2)],
+    flip_maze=False,
+)
+
 
 official_maze = np.array(
     [
@@ -45,7 +66,35 @@ official_maze = np.array(
     ]
 )
 
+official_dots = np.array(
+    [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+        [0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0],
+        [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+        [0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+        [0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0],
+        [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0],
+        [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
+        [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ]
+)
 
-official_maze = flip_mazes_horizontally(official_maze)
+official_game_board = GameBoard(official_maze, official_dots, (5, 9), [(11, 9)])
 
-mazes_dict = {"Test maze": test_maze, "Official maze": official_maze}
+
+game_board_dict = {"Test maze": test_game_board, "Official maze": official_game_board}
+expand_dict = {"Test maze": 80, "Official maze": 35}

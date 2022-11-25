@@ -6,20 +6,17 @@ from plot_pacman import create_layout
 class Game:
     def __init__(
         self,
-        maze,
-        dots,
-        pacman_position,
-        ghosts_positions,
+        game_board,
         pacman_strategy,
         ghosts_strategy,
     ):
-        self.maze = maze
-        self.dots = dots
+        self.maze = game_board.maze
+        self.dots = game_board.dots
 
-        self.pacman = Pacman(pacman_position, strategy=pacman_strategy)
+        self.pacman = Pacman(game_board.pacman_start, strategy=pacman_strategy)
         self.ghosts = [
-            Ghost(i + 1, ghosts_positions[i], strategy=ghosts_strategy[i])
-            for i in range(len(ghosts_positions))
+            Ghost(i + 1, game_board.ghost_start[i], strategy=ghosts_strategy[i])
+            for i in range(len(game_board.ghost_start))
         ]
         self.players = [self.pacman] + self.ghosts
 
