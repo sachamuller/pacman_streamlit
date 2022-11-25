@@ -36,6 +36,7 @@ test_game_board = GameBoard(
     (1, 1),
     [(4, 2)],
     flip_maze=False,
+    flip_dots=False,
 )
 
 
