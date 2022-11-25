@@ -12,22 +12,22 @@ st.title("Playing Pac-Man with Minimax")
 max_number = st.slider(
     "Max number of turns",
     min_value=0,
-    max_value=3000,
-    value=200,
+    max_value=1500,
+    value=50,
 )
 
 maze_name = st.selectbox("Maze :", game_board_dict.keys())
 game_board = game_board_dict[maze_name]
 
+ghost_difficulty = st.radio(
+    "Ghost difficulty", options=["random", "clever"], horizontal=True
+)
 
 heuristic_text = st.text_area(
     "def my_heuristic(game):",
     """    return -game.dots.sum()""",
 )
 
-ghost_difficulty = st.radio(
-    "Ghost difficulty", options=["random", "clever"], horizontal=True
-)
 
 if st.button("Compute game"):
     game = Game(game_board, None, [None])
