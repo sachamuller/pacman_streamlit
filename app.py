@@ -6,6 +6,7 @@ from alphabeta import get_action_with_minimax_alphabeta
 from random import choice
 from utils import Action
 from plot_pacman import get_fig_from_layout_list
+from copy import deepcopy
 
 st.title("Playing Pac-Man with Minimax")
 
@@ -28,13 +29,14 @@ heuristic_text = st.text_area(
     """    return -game.dots.sum()""",
 )
 
+game_initiatlization = Game(game_board, None, [None])
+
 
 if st.button("Compute game"):
-    game = Game(game_board, None, [None])
+    game = deepcopy(game_initiatlization)
 
     heuristic_text = "global my_heuristic\ndef my_heuristic(game):\n" + heuristic_text
-    print("HEHO")
-    print(heuristic_text)
+
     exec(heuristic_text)
     # my_heuristic is marked as undefined in VS code but it is not as we retrieve its value
     # when we exec the test containing its definition !
