@@ -2,8 +2,11 @@ import streamlit as st
 import numpy as np
 import plotly
 from game import Game
-from heuristics import ghost_heuristic, pacman_heuristic
+from heuristics import pacman_heuristic, ghost_bfs
 from mazes import mazes_dict
+from alphabeta import get_action_with_minimax_alphabeta
+from random import choice
+from utils import Action
 
 max_number = st.slider(
     "Max number of turns",
@@ -17,7 +20,19 @@ maze = mazes_dict[st.selectbox("Maze :", mazes_dict.keys())]
 
 dots = np.array([[0 if cell == 1 else 1 for cell in line] for line in maze])
 
-game = Game(maze, dots, (1, 1), [(4, 2)], pacman_heuristic, [ghost_heuristic])
+game = Game(maze, dots, (1, 1), [(4, 2)], None, [None])
+game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
+    game, pacman_heuristic, game.pacman, game.players
+)
+# Random ghost :
+# game.ghosts[0].strategy = lambda game: Action(
+#     game.ghosts[0], choice(game.get_legal_directions(game.ghosts[0].name))
+# )
+
+game.ghosts[0].strategy = lambda game: Action(
+    game.ghosts[0], ghost_bfs(game.ghosts[0], game)
+)
+
 
 layout_list = game.run_and_get_layout(max_number)
 

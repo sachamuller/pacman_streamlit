@@ -1,7 +1,5 @@
 from copy import deepcopy
-import numpy as np
-from alphabeta import get_action_with_minimax_alphabeta
-from utils import Orientations, Directions, Action
+from utils import Orientations, Directions
 from plot_pacman import create_layout
 
 
@@ -12,18 +10,17 @@ class Game:
         dots,
         pacman_position,
         ghosts_positions,
-        pacman_heuristic,
-        ghosts_heuristics,
+        pacman_strategy,
+        ghosts_strategy,
     ):
         self.maze = maze
         self.dots = dots
 
-        self.pacman = Pacman(pacman_position, heuristic=pacman_heuristic)
+        self.pacman = Pacman(pacman_position, strategy=pacman_strategy)
         self.ghosts = [
-            Ghost(i + 1, ghosts_positions[i], heuristic=ghosts_heuristics[i])
+            Ghost(i + 1, ghosts_positions[i], strategy=ghosts_strategy[i])
             for i in range(len(ghosts_positions))
         ]
-        self.ghosts_heuristics = ghosts_heuristics
         self.players = [self.pacman] + self.ghosts
 
         self.game_over = False
@@ -92,7 +89,7 @@ class Game:
             and (max_turns is not None and count_turns < max_turns)
         ):
             for player in self.players:
-                action = get_action_with_minimax_alphabeta(self, player, self.players)
+                action = player.strategy(self)
                 print(action)
                 self.next_state(action)
                 list_layout.append(create_layout(self))
@@ -124,13 +121,13 @@ class Game:
 
 
 class Player:
-    def __init__(self, name, position, orientation, alive, heuristic):
+    def __init__(self, name, position, orientation, alive, strategy):
         self.name = name
         self.line = position[0]
         self.column = position[1]
         self.orientation = orientation
         self.alive = alive
-        self.heuristic = heuristic
+        self.strategy = strategy
 
     def next(self, action, maze):
         self.next_position(action, maze)
@@ -166,9 +163,9 @@ class Player:
 
 class Pacman(Player):
     def __init__(
-        self, position, orientation=Orientations.west, alive=True, heuristic=None
+        self, position, orientation=Orientations.west, alive=True, strategy=None
     ):
-        super().__init__(0, position, orientation, alive, heuristic)
+        super().__init__(0, position, orientation, alive, strategy)
 
     def is_still_alive(self, ghosts):
         for ghost in ghosts:
@@ -183,10 +180,10 @@ class Ghost(Player):
         position=(0, 0),
         orientation=Orientations.east,
         alive=True,
-        heuristic=None,
+        strategy=None,
         color="red",
     ):
-        super().__init__(id, position, orientation, alive, heuristic)
+        super().__init__(id, position, orientation, alive, strategy)
         self.is_zombie = False
         self.zombie_timer = -1
         self.color = color

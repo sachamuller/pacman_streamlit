@@ -3,13 +3,13 @@ from utils import Action
 MAX_DEPTH = 3
 
 
-def get_action_with_minimax_alphabeta(game, player, players):
+def get_action_with_minimax_alphabeta(game, heuristic, player, players):
     next_action_value, next_action = get_value_min_or_max(
         game,
         player.name,
         players,
         current_depth=0,
-        heuristic=player.heuristic,
+        heuristic=heuristic,
         alpha=None,
         beta=None,
     )
