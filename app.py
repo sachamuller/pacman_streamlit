@@ -1,7 +1,7 @@
 from copy import deepcopy
 from random import choice
-
 import streamlit as st
+import traceback
 
 from alphabeta import get_action_with_minimax_alphabeta
 from game import Game
@@ -40,23 +40,26 @@ game_initiatlization = Game(game_board, None, [None])
 if st.button("Compute game"):
     game = deepcopy(game_initiatlization)
 
-    heuristic = get_heuristic_from_streamlit(heuristic_text)
-    game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
-        game, heuristic, game.pacman, game.players
-    )
-
-    if ghost_difficulty == "random":
-        game.ghosts[0].strategy = lambda game: Action(
-            game.ghosts[0], choice(game.get_legal_directions(game.ghosts[0].name))
-        )
-    if ghost_difficulty == "clever":
-        game.ghosts[0].strategy = lambda game: Action(
-            game.ghosts[0], ghost_bfs(game.ghosts[0], game)
+    error, heuristic_or_error = get_heuristic_from_streamlit(heuristic_text)
+    if error:
+        st.error("\n".join(traceback.format_exception(heuristic_or_error)))
+    else:
+        game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
+            game, heuristic_or_error, game.pacman, game.players
         )
 
-    layout_list = game.run_and_get_layout(max_number)
+        if ghost_difficulty == "random":
+            game.ghosts[0].strategy = lambda game: Action(
+                game.ghosts[0], choice(game.get_legal_directions(game.ghosts[0].name))
+            )
+        if ghost_difficulty == "clever":
+            game.ghosts[0].strategy = lambda game: Action(
+                game.ghosts[0], ghost_bfs(game.ghosts[0], game)
+            )
 
-    fig = get_fig_from_layout_list(layout_list, game, maze_name)
+        layout_list = game.run_and_get_layout(max_number)
 
-    # Plot!
-    st.plotly_chart(fig, use_container_width=True)
+        fig = get_fig_from_layout_list(layout_list, game, maze_name)
+
+        # Plot!
+        st.plotly_chart(fig, use_container_width=True)
