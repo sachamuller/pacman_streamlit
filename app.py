@@ -5,7 +5,11 @@ import traceback
 
 from alphabeta import get_action_with_minimax_alphabeta
 from game import Game
-from heuristics import get_heuristic_from_streamlit, my_heuristic_definition
+from heuristics import (
+    get_heuristic_from_streamlit,
+    my_heuristic_definition,
+    add_tab_to_beginning_of_each_line,
+)
 from mazes import game_board_dict
 from my_strategies import ghost_bfs
 from plot_pacman import get_fig_from_layout_list
@@ -40,25 +44,32 @@ game_initiatlization = Game(game_board, None, [None])
 if st.button("Compute game"):
     game = deepcopy(game_initiatlization)
 
-    error, heuristic_or_error = get_heuristic_from_streamlit(heuristic_text)
-    if error:
-        st.error("\n".join(traceback.format_exception(heuristic_or_error)))
-    else:
-        game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
-            game, heuristic_or_error, game.pacman, game.players
+    if ghost_difficulty == "random":
+        game.ghosts[0].strategy = lambda game: Action(
+            game.ghosts[0], choice(game.get_legal_directions(game.ghosts[0].name))
+        )
+    if ghost_difficulty == "clever":
+        game.ghosts[0].strategy = lambda game: Action(
+            game.ghosts[0], ghost_bfs(game.ghosts[0], game)
         )
 
-        if ghost_difficulty == "random":
-            game.ghosts[0].strategy = lambda game: Action(
-                game.ghosts[0], choice(game.get_legal_directions(game.ghosts[0].name))
-            )
-        if ghost_difficulty == "clever":
-            game.ghosts[0].strategy = lambda game: Action(
-                game.ghosts[0], ghost_bfs(game.ghosts[0], game)
-            )
+    try:
+        heuristic = get_heuristic_from_streamlit(heuristic_text)
+
+        game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
+            game, heuristic, game.pacman, game.players
+        )
 
         layout_list = game.run_and_get_layout(max_number)
 
+    except Exception as error:
+
+        error_title = "\n".join(traceback.format_exception_only(error))
+        error_body = "\n".join(traceback.format_exception(error)[-5:])
+        print(traceback.format_exception_only(error))
+        st.error(error_title + f"\n\nTraceback : \n\n {error_body}")
+
+    else:
         fig = get_fig_from_layout_list(layout_list, game, maze_name)
 
         # Plot!

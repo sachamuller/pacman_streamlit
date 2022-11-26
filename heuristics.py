@@ -18,10 +18,8 @@ def get_heuristic_from_streamlit(heuristic_text):
     heuristic_text = (
         f"global my_heuristic\n{my_heuristic_definition}\n" + heuristic_text
     )
-    try:
-        exec(heuristic_text)
-    except Exception as e:
-        return True, e
+
+    exec(heuristic_text)
 
     # my_heuristic is marked as undefined in VS code but it is not as we retrieve its value
     # when we exec the test containing its definition !
@@ -33,7 +31,7 @@ def get_heuristic_from_streamlit(heuristic_text):
         game.ghosts[0].line,
         game.ghosts[0].column,
     )
-    return False, heuristic_streamlit
+    return heuristic_streamlit
 
 
 def add_tab_to_beginning_of_each_line(text, tabs_quantity=1):
