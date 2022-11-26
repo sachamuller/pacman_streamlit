@@ -1,10 +1,11 @@
+import numpy as np
+
 from utils import (
     euclidean_distance,
     euclidean_distance_between_players,
     manhattan_distance,
     manhattan_distance_between_players,
 )
-import numpy as np
 
 my_heuristic_definition = "def my_heuristic(maze, dots, pacman_line, pacman_column, ghost_line, ghost_column):"
 

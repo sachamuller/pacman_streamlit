@@ -1,6 +1,7 @@
-from utils import Orientations
 import plotly
+
 from mazes import expand_dict
+from utils import Orientations
 
 
 def create_layout(game):

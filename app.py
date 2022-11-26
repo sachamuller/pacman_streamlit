@@ -1,13 +1,15 @@
-import streamlit as st
-from game import Game
-from my_strategies import ghost_bfs
-from mazes import game_board_dict
-from alphabeta import get_action_with_minimax_alphabeta
-from random import choice
-from utils import Action
-from plot_pacman import get_fig_from_layout_list
 from copy import deepcopy
+from random import choice
+
+import streamlit as st
+
+from alphabeta import get_action_with_minimax_alphabeta
+from game import Game
 from heuristics import get_heuristic_from_streamlit, my_heuristic_definition
+from mazes import game_board_dict
+from my_strategies import ghost_bfs
+from plot_pacman import get_fig_from_layout_list
+from utils import Action
 
 st.title("Playing Pac-Man with Minimax")
 

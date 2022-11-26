@@ -1,6 +1,7 @@
 from copy import deepcopy
-from utils import Orientations, Directions
+
 from plot_pacman import create_layout
+from utils import Directions, Orientations
 
 
 class Game:

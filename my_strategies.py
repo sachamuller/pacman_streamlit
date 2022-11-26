@@ -1,11 +1,13 @@
+from copy import deepcopy
+
+import numpy as np
+
 from utils import (
-    manhattan_distance,
-    manhattan_distance_between_players,
     Directions,
     euclidean_distance,
+    manhattan_distance,
+    manhattan_distance_between_players,
 )
-import numpy as np
-from copy import deepcopy
 
 
 def pacman_heuristic(game):
