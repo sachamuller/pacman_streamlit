@@ -65,42 +65,43 @@ game_initiatlization = Game(game_board, None, [None])
 
 
 if st.button("Compute game"):
-    game = deepcopy(game_initiatlization)
+    with st.spinner("Computing your game..."):
+        game = deepcopy(game_initiatlization)
 
-    if ghost_difficulty == "random":
-        game.ghosts[0].strategy = lambda game: Action(
-            game.ghosts[0], choice(game.get_legal_directions(game.ghosts[0].name))
-        )
-    if ghost_difficulty == "chaser":
-        game.ghosts[0].strategy = lambda game: Action(
-            game.ghosts[0], ghost_bfs(game.ghosts[0], game)
-        )
-    if ghost_difficulty == "random-chaser":
-        game.ghosts[0].strategy = lambda game: choice(
-            [
-                Action(
-                    game.ghosts[0],
-                    choice(game.get_legal_directions(game.ghosts[0].name)),
-                ),
-                Action(game.ghosts[0], ghost_bfs(game.ghosts[0], game)),
-            ],
-            p=[0.1, 0.9],
-        )
+        if ghost_difficulty == "random":
+            game.ghosts[0].strategy = lambda game: Action(
+                game.ghosts[0], choice(game.get_legal_directions(game.ghosts[0].name))
+            )
+        if ghost_difficulty == "chaser":
+            game.ghosts[0].strategy = lambda game: Action(
+                game.ghosts[0], ghost_bfs(game.ghosts[0], game)
+            )
+        if ghost_difficulty == "random-chaser":
+            game.ghosts[0].strategy = lambda game: choice(
+                [
+                    Action(
+                        game.ghosts[0],
+                        choice(game.get_legal_directions(game.ghosts[0].name)),
+                    ),
+                    Action(game.ghosts[0], ghost_bfs(game.ghosts[0], game)),
+                ],
+                p=[0.1, 0.9],
+            )
 
-    try:
-        heuristic = get_heuristic_from_streamlit(heuristic_text)
+        try:
+            heuristic = get_heuristic_from_streamlit(heuristic_text)
 
-        game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
-            game, heuristic, game.pacman, game.players
-        )
+            game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
+                game, heuristic, game.pacman, game.players
+            )
 
-        layout_list = game.run_and_get_layout(max_number)
+            layout_list = game.run_and_get_layout(max_number)
 
-    except Exception as error:
-        st.exception(error)
+        except Exception as error:
+            st.exception(error)
 
-    else:
-        fig = get_fig_from_layout_list(layout_list, game, maze_name)
+        else:
+            fig = get_fig_from_layout_list(layout_list, game, maze_name)
 
-        # Plot!
-        st.plotly_chart(fig, use_container_width=True)
+            # Plot!
+            st.plotly_chart(fig, use_container_width=True)
