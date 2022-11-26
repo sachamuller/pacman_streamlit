@@ -55,7 +55,6 @@ if st.button("Compute game"):
 
     try:
         heuristic = get_heuristic_from_streamlit(heuristic_text)
-        print(heuristic)
 
         game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
             game, heuristic, game.pacman, game.players

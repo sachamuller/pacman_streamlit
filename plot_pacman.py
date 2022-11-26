@@ -148,7 +148,7 @@ def get_fig_from_layout_list(layout_list, game, maze_name):
                 {
                     "mode": "immediate",
                     "transition": {"duration": 0},
-                    "frame": {"duration": 0, "redraw": False},  # TODO
+                    "frame": {"duration": 0, "redraw": True},
                 },
             ],
         }
@@ -178,7 +178,7 @@ def get_fig_from_layout_list(layout_list, game, maze_name):
                                 "mode": "immediate",
                                 "fromcurrent": "true",
                                 "transition": {"duration": 0},
-                                "frame": {"duration": 50, "redraw": False},  # TODO
+                                "frame": {"duration": 50, "redraw": True},
                             },
                         ],
                         "label": "Play",
@@ -190,7 +190,7 @@ def get_fig_from_layout_list(layout_list, game, maze_name):
                             {
                                 "mode": "immediate",
                                 "transition": {"duration": 0},
-                                "frame": {"duration": 0, "redraw": False},  # TODO
+                                "frame": {"duration": 0, "redraw": True},
                             },
                         ],
                         "label": "Pause",
