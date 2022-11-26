@@ -66,7 +66,6 @@ if st.button("Compute game"):
 
         error_title = "\n".join(traceback.format_exception_only(error))
         error_body = "\n".join(traceback.format_exception(error)[-5:])
-        print(traceback.format_exception_only(error))
         st.error(error_title + f"\n\nTraceback : \n\n {error_body}")
 
     else:
