@@ -19,7 +19,7 @@ def flip_array_horizontally(array):
     return np.flip(array, 0)
 
 
-test_maze = np.array(
+small_maze = np.array(
     [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -31,12 +31,34 @@ test_maze = np.array(
     ]
 )
 test_game_board = GameBoard(
-    test_maze,
-    np.array([[0 if cell == 1 else 1 for cell in line] for line in test_maze]),
+    small_maze,
+    np.array([[0 if cell == 1 else 1 for cell in line] for line in small_maze]),
     (1, 1),
     [(4, 2)],
     flip_maze=False,
     flip_dots=False,
+)
+
+intermediate_maze = np.array(
+    [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ]
+)
+intermediate_game_board = GameBoard(
+    intermediate_maze,
+    np.array([[0 if cell == 1 else 1 for cell in line] for line in intermediate_maze]),
+    (5, 5),
+    [(9, 9)],
 )
 
 
@@ -97,5 +119,9 @@ official_dots = np.array(
 official_game_board = GameBoard(official_maze, official_dots, (5, 9), [(11, 9)])
 
 
-game_board_dict = {"Test maze": test_game_board, "Official maze": official_game_board}
-expand_dict = {"Test maze": 80, "Official maze": 35}
+game_board_dict = {
+    "Small maze": test_game_board,
+    "Intermediate maze": intermediate_game_board,
+    "Official maze": official_game_board,
+}
+expand_dict = {"Small maze": 80, "Official maze": 35, "Intermediate maze": 50}
