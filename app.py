@@ -1,5 +1,5 @@
 from copy import deepcopy
-from numpy.random import choice
+from numpy.random import choice, seed
 import streamlit as st
 import traceback
 
@@ -10,6 +10,8 @@ from mazes import game_board_dict
 from my_strategies import ghost_bfs
 from plot_pacman import get_fig_from_layout_list
 from utils import Action
+
+seed(42)
 
 st.title("Playing Pac-Man with Minimax")
 
@@ -95,10 +97,7 @@ if st.button("Compute game"):
         layout_list = game.run_and_get_layout(max_number)
 
     except Exception as error:
-
-        error_title = "\n".join(traceback.format_exception_only(error))
-        error_body = "\n".join(traceback.format_exception(error)[-5:])
-        st.error(error_title + f"\n\nTraceback : \n\n {error_body}")
+        st.exception(error)
 
     else:
         fig = get_fig_from_layout_list(layout_list, game, maze_name)
