@@ -7,6 +7,7 @@ from random import choice
 from utils import Action
 from plot_pacman import get_fig_from_layout_list
 from copy import deepcopy
+from heuristics import get_heuristic_from_streamlit, my_heuristic_definition
 
 st.title("Playing Pac-Man with Minimax")
 
@@ -25,8 +26,10 @@ ghost_difficulty = st.radio(
 )
 
 heuristic_text = st.text_area(
-    "def my_heuristic(game):",
-    """    return -game.dots.sum()""",
+    my_heuristic_definition,
+    """# Write your code here
+# No need to indent from the function definition
+return -dots.sum()""",
 )
 
 game_initiatlization = Game(game_board, None, [None])
@@ -35,13 +38,9 @@ game_initiatlization = Game(game_board, None, [None])
 if st.button("Compute game"):
     game = deepcopy(game_initiatlization)
 
-    heuristic_text = "global my_heuristic\ndef my_heuristic(game):\n" + heuristic_text
-
-    exec(heuristic_text)
-    # my_heuristic is marked as undefined in VS code but it is not as we retrieve its value
-    # when we exec the test containing its definition !
+    heuristic = get_heuristic_from_streamlit(heuristic_text)
     game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
-        game, my_heuristic, game.pacman, game.players
+        game, heuristic, game.pacman, game.players
     )
 
     if ghost_difficulty == "random":
