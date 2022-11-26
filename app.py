@@ -1,6 +1,6 @@
 import streamlit as st
 from game import Game
-from heuristics import ghost_bfs
+from my_strategies import ghost_bfs
 from mazes import game_board_dict
 from alphabeta import get_action_with_minimax_alphabeta
 from random import choice
