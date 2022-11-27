@@ -63,6 +63,9 @@ def ghost_bfs(ghost, game):
     pacman_line = game.pacman.line
     pacman_column = game.pacman.column
 
+    if ghost.line == pacman_line and ghost.column == pacman_column:
+        return Directions.stay
+
     current_cell = [ghost.line, ghost.column]
     my_map[ghost.line][ghost.column] = 0
     depth = 1

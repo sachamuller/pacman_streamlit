@@ -1,4 +1,5 @@
 from copy import deepcopy
+from numpy.random import shuffle
 
 from plot_pacman import create_layout
 from utils import Directions, Orientations
@@ -67,7 +68,7 @@ class Game:
 
     def get_legal_directions(self, player_name):
         player = [p for p in self.players if p.name == player_name][0]
-        available_actions = []  # [Directions.stay]
+        available_actions = [Directions.stay]
         if not self.maze[player.line + 1][player.column]:
             available_actions.append(Directions.up)
         if not self.maze[player.line - 1][player.column]:
@@ -76,6 +77,7 @@ class Game:
             available_actions.append(Directions.right)
         if not self.maze[player.line][player.column - 1]:
             available_actions.append(Directions.left)
+        shuffle(available_actions)
         return available_actions
 
     def run_and_get_layout(self, max_turns=None):

@@ -1,3 +1,6 @@
+# If you are curious, or if you want to play with several ghosts, this is a generic version
+# of minimax with alpha beta pruning that works for many players
+
 from utils import Action
 
 MAX_DEPTH = 3

@@ -3,7 +3,7 @@ from numpy.random import choice, seed
 import streamlit as st
 import traceback
 
-from alphabeta import get_action_with_minimax_alphabeta
+from alphabeta_two_players import get_pacman_action_with_minimax
 from game import Game
 from heuristics import get_heuristic_from_streamlit, my_heuristic_definition
 from mazes import game_board_dict
@@ -33,7 +33,7 @@ with left_col:
 with right_col:
     ghost_difficulty = st.radio(
         "Choose the ghost behaviour :",
-        options=["random", "chaser", "random-chaser"],
+        options=["random", "lucky-random", "drunk-chaser", "chaser"],
         horizontal=True,
     )
 
@@ -76,7 +76,7 @@ if st.button("Compute game"):
             game.ghosts[0].strategy = lambda game: Action(
                 game.ghosts[0], ghost_bfs(game.ghosts[0], game)
             )
-        if ghost_difficulty == "random-chaser":
+        if ghost_difficulty == "drunk-chaser":
             game.ghosts[0].strategy = lambda game: choice(
                 [
                     Action(
@@ -85,14 +85,25 @@ if st.button("Compute game"):
                     ),
                     Action(game.ghosts[0], ghost_bfs(game.ghosts[0], game)),
                 ],
-                p=[0.1, 0.9],
+                p=[0.2, 0.8],
+            )
+        if ghost_difficulty == "lucky-random":
+            game.ghosts[0].strategy = lambda game: choice(
+                [
+                    Action(
+                        game.ghosts[0],
+                        choice(game.get_legal_directions(game.ghosts[0].name)),
+                    ),
+                    Action(game.ghosts[0], ghost_bfs(game.ghosts[0], game)),
+                ],
+                p=[0.3, 0.7],
             )
 
         try:
             heuristic = get_heuristic_from_streamlit(heuristic_text)
 
-            game.pacman.strategy = lambda game: get_action_with_minimax_alphabeta(
-                game, heuristic, game.pacman, game.players
+            game.pacman.strategy = lambda game: get_pacman_action_with_minimax(
+                game, heuristic, game.pacman, game.ghosts[0]
             )
 
             layout_list = game.run_and_get_layout(max_number)
