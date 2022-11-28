@@ -26,6 +26,12 @@ class Action:
         return f"{self.player.name} : {self.direction.name}"
 
 
+class NodeTypes(Enum):
+    max = "max"
+    min = "min"
+    eval = "evaluation"
+
+
 def manhattan_distance(a, b):
     xa, ya = a
     xb, yb = b
