@@ -47,10 +47,15 @@ st.markdown(
     """
 - `maze` : numpy array, `maze[i][j]` is 1 if there is a wall at line i and column j, else 0
 - `dots` : numpy array, `dots[i][j]` is 1 if there is a dot to eat at line i and column j, else 0
-- `pacman_line` : int, the line where Pac-Man is
-- `pacman_column` : int, the column where Pac-Man is
-- `ghost_line` : int, the line where the ghost is
-- `ghost_column` : int, the column where the ghost is
+- `power_pellets` : numpy array, `power_pellets[i][j]` is 1 if there is a powerpellet to eat at line i and column j, else 0
+- `pacman.line` : int, the line where Pac-Man is
+- `pacman.column` : int, the column where Pac-Man is
+- `ghost.line` : int, the line where the ghost is
+- `ghost.column` : int, the column where the ghost is
+- `ghost.is_zombie` : bool, whether you can eat the ghost
+- `ghost.zombie_timer` : int, turns left with a zombie ghost
+- `ghost.alive` : bool, whether the ghost is alive
+- `ghost.death_timer` : int, turns left with a dead ghost
 """
 )
 
@@ -58,7 +63,7 @@ heuristic_text = st.text_area(
     my_heuristic_definition,
     """# Write your code here
 # No need to indent from the function definition
-return -dots.sum()""",
+return 0""",
 )
 
 game_initiatlization = Game(game_board, None, [None])

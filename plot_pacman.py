@@ -119,7 +119,7 @@ def add_ghost(ghost, layout):
             else ("" if ghost.alive else str(ghost.death_timer)),
             "showarrow": False,
             "font": {"size": 20},
-            # "bgcolor": "rgba(0, 0, 0, 0)" else ,
+            "bgcolor": "rgba(0, 0, 0, 0.5)" if not ghost.alive else "rgba(0, 0, 0, 0)",
             # "borderpad": max(layout["height"], layout["width"]),
         }
     ]
