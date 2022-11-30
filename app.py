@@ -7,7 +7,7 @@ from alphabeta_two_players import get_pacman_action_with_minimax
 from game import Game
 from heuristics import get_heuristic_from_streamlit, my_heuristic_definition
 from mazes import game_board_dict
-from my_strategies import ghost_bfs
+from my_strategies import ghost_strategy
 from plot_pacman import get_fig_from_layout_list
 from utils import Action
 
@@ -36,6 +36,7 @@ with right_col:
         options=["random", "lucky-random", "drunk-chaser", "chaser"],
         horizontal=True,
     )
+    ghost_difficulty = "chaser"
 
 st.header("Write your own heuristic")
 
@@ -80,7 +81,7 @@ if True:
             )
         if ghost_difficulty == "chaser":
             game.ghosts[0].strategy = lambda game: Action(
-                game.ghosts[0], ghost_bfs(game.ghosts[0], game)
+                game.ghosts[0], ghost_strategy(game.ghosts[0], game)
             )
         if ghost_difficulty == "drunk-chaser":
             game.ghosts[0].strategy = lambda game: choice(
@@ -89,7 +90,7 @@ if True:
                         game.ghosts[0],
                         choice(game.get_legal_directions(game.ghosts[0].name)),
                     ),
-                    Action(game.ghosts[0], ghost_bfs(game.ghosts[0], game)),
+                    Action(game.ghosts[0], ghost_strategy(game.ghosts[0], game)),
                 ],
                 p=[0.2, 0.8],
             )
@@ -100,7 +101,7 @@ if True:
                         game.ghosts[0],
                         choice(game.get_legal_directions(game.ghosts[0].name)),
                     ),
-                    Action(game.ghosts[0], ghost_bfs(game.ghosts[0], game)),
+                    Action(game.ghosts[0], ghost_strategy(game.ghosts[0], game)),
                 ],
                 p=[0.3, 0.7],
             )

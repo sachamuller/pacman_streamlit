@@ -58,6 +58,15 @@ def ghost_heuristic(game):
     return result
 
 
+def ghost_strategy(ghost, game, acceptable_distance=5):
+    direction = ghost_bfs(ghost, game)
+    if ghost.is_zombie:
+        # if zombie and pacman is too close we take opposite direction as we would have taken to reach pacman
+        if manhattan_distance_between_players(game.pacman, ghost) < acceptable_distance:
+            return get_opposite_direction(direction)
+    return direction
+
+
 def ghost_bfs(ghost, game):
     my_map = -1 * np.ones(game.maze.shape)
     pacman_line = game.pacman.line
@@ -137,3 +146,16 @@ def get_direction_from_adjacent_cells(my_cell, my_future_cell):
         return Directions.left
     if my_future_cell[1] - my_cell[1] == +1:
         return Directions.right
+
+
+def get_opposite_direction(direction):
+    if direction == Directions.down:
+        return Directions.up
+    if direction == Directions.up:
+        return Directions.down
+    if direction == Directions.right:
+        return Directions.left
+    if direction == Directions.left:
+        return Directions.right
+    if direction == Directions.stay:
+        return direction
