@@ -3,16 +3,28 @@ import numpy as np
 
 class GameBoard:
     def __init__(
-        self, maze, dots, pacman_start, ghost_start, flip_maze=True, flip_dots=True
+        self,
+        maze,
+        dots,
+        power_pellets,
+        pacman_start,
+        ghost_start,
+        flip_maze=True,
+        flip_dots_and_power_pellets=True,
     ):
         self.maze = maze
         self.dots = dots
+        if power_pellets is None:
+            self.power_pellets = np.zeros(self.dots.shape)
+        else:
+            self.power_pellets = power_pellets
         self.pacman_start = pacman_start
         self.ghost_start = ghost_start
         if flip_maze:
             self.maze = flip_array_horizontally(self.maze)
-        if flip_dots:
+        if flip_dots_and_power_pellets:
             self.dots = flip_array_horizontally(self.dots)
+            self.power_pellets = flip_array_horizontally(self.power_pellets)
 
 
 def flip_array_horizontally(array):
@@ -30,13 +42,17 @@ small_maze = np.array(
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
 )
+power_pellets = np.zeros(small_maze.shape)
+power_pellets[5][1] = 1
+power_pellets[1][2] = 1
 test_game_board = GameBoard(
     small_maze,
     np.array([[0 if cell == 1 else 1 for cell in line] for line in small_maze]),
+    power_pellets,
     (1, 1),
     [(4, 2)],
     flip_maze=False,
-    flip_dots=False,
+    flip_dots_and_power_pellets=False,
 )
 
 intermediate_maze = np.array(
@@ -57,6 +73,7 @@ intermediate_maze = np.array(
 intermediate_game_board = GameBoard(
     intermediate_maze,
     np.array([[0 if cell == 1 else 1 for cell in line] for line in intermediate_maze]),
+    None,
     (5, 5),
     [(9, 9)],
 )
@@ -116,7 +133,7 @@ official_dots = np.array(
     ]
 )
 
-official_game_board = GameBoard(official_maze, official_dots, (5, 9), [(11, 9)])
+official_game_board = GameBoard(official_maze, official_dots, None, (5, 9), [(11, 9)])
 
 
 game_board_dict = {

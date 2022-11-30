@@ -64,7 +64,8 @@ return -dots.sum()""",
 game_initiatlization = Game(game_board, None, [None])
 
 
-if st.button("Compute game"):
+# if st.button("Compute game"):
+if True:
     with st.spinner("Computing your game..."):
         game = deepcopy(game_initiatlization)
 
