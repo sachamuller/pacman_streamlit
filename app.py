@@ -36,7 +36,6 @@ with right_col:
         options=["random", "lucky-random", "drunk-chaser", "chaser"],
         horizontal=True,
     )
-    ghost_difficulty = "chaser"
 
 st.header("Write your own heuristic")
 
@@ -70,8 +69,7 @@ return 0""",
 game_initiatlization = Game(game_board, None, [None])
 
 
-# if st.button("Compute game"):
-if True:
+if st.button("Compute game"):
     with st.spinner("Computing your game..."):
         game = deepcopy(game_initiatlization)
 
