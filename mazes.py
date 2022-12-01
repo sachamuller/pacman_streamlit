@@ -44,7 +44,7 @@ small_maze = np.array(
 )
 power_pellets = np.zeros(small_maze.shape)
 power_pellets[5][1] = 1
-power_pellets[1][2] = 1
+power_pellets[1][10] = 1
 test_game_board = GameBoard(
     small_maze,
     np.array([[0 if cell == 1 else 1 for cell in line] for line in small_maze]),
@@ -57,23 +57,26 @@ test_game_board = GameBoard(
 
 intermediate_maze = np.array(
     [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1],
-        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1],
+        [1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1],
+        [1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1],
+        [1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1],
+        [1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1],
+        [1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1],
+        [1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
 )
+intermediate_power_pellets = np.zeros(intermediate_maze.shape)
+intermediate_power_pellets[5][4] = 1
+intermediate_power_pellets[5][10] = 1
 intermediate_game_board = GameBoard(
     intermediate_maze,
     np.array([[0 if cell == 1 else 1 for cell in line] for line in intermediate_maze]),
-    None,
+    intermediate_power_pellets,
     (5, 5),
     [(9, 9)],
 )
