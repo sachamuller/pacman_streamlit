@@ -116,12 +116,16 @@ if compute_game:
             heuristic = get_heuristic_from_streamlit(heuristic_text)
 
             game.pacman.strategy = lambda game: get_pacman_action_with_minimax(
-                game, heuristic, game.pacman, game.ghosts[0]
+                game, heuristic, game.pacman, game.ghosts[0], tree_to_plot=viz_or_not
             )
-
-            layout_list, tree_datas, tree_layouts = game.run_and_get_layout_and_tree(
-                max_number
-            )
+            if viz_or_not:
+                (
+                    layout_list,
+                    tree_datas,
+                    tree_layouts,
+                ) = game.run_and_get_layout_and_tree(max_number)
+            else:
+                layout_list = game.run_and_get_layout(max_number)
 
         except Exception as error:
             st.exception(error)

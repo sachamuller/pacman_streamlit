@@ -10,6 +10,7 @@ def get_pacman_action_with_minimax(
     evaluate_game_state,
     pacman,
     ghost,
+    tree_to_plot=False,
 ):
     initial_node = Node(
         value=None, parent_node=None, from_action=None, node_type=NodeTypes.max
@@ -29,8 +30,11 @@ def get_pacman_action_with_minimax(
             from_action=None,
         )[0],
     )
-    tree_data, tree_layout = plot_tree(Tree(initial_node), show=False)
-    return action, tree_data, tree_layout
+    if tree_to_plot:
+        tree_data, tree_layout = plot_tree(Tree(initial_node), show=False)
+        return action, tree_data, tree_layout
+    else:
+        return action
 
 
 def minimax(
