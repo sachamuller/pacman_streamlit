@@ -14,6 +14,7 @@ class Game:
     ):
         self.maze = game_board.maze
         self.dots = game_board.dots
+        self.power_pellets = game_board.power_pellets
 
         self.pacman = Pacman(game_board.pacman_start, strategy=pacman_strategy)
         self.ghosts = [
@@ -24,20 +25,28 @@ class Game:
 
         self.game_over = False
         self.game_won = False
+        self.score = 0
 
         # Check game is valid and update some things if necessary
         self.check_players_names_are_unique()
+        self.update_ghosts_aliveness()
         self.update_dots()
-        self.update_aliveness()
+        self.update_power_pellets()
+        self.update_pacman_aliveness()
         self.is_game_over_or_won()
 
     def next_state(self, action):
+        self.update_ghosts_aliveness()
         if not self.game_over or not self.game_won:
             for player in self.players:
                 if player.name == action.player.name:
                     player.next(action, self.maze)
             self.update_dots()
-            self.update_aliveness()
+            self.update_power_pellets()
+            self.update_pacman_aliveness()
+            self.update_ghost_timers()
+            if action.player.name == self.pacman.name:
+                self.score -= 1
             self.is_game_over_or_won()
 
     def project_next_state(self, action):
@@ -53,12 +62,27 @@ class Game:
                 )
 
     def update_dots(self):
-        self.dots[self.pacman.line][self.pacman.column] = 0
+        if self.dots[self.pacman.line][self.pacman.column] == 1:
+            self.score += 10
+            self.dots[self.pacman.line][self.pacman.column] = 0
 
-    def update_aliveness(self):
-        self.pacman.is_still_alive(self.ghosts)
+    def update_power_pellets(self):
+        if self.power_pellets[self.pacman.line][self.pacman.column] == 1:
+            for ghost in self.ghosts:
+                ghost.get_zombified()
+            self.power_pellets[self.pacman.line][self.pacman.column] = 0
+
+    def update_ghost_timers(self):
         for ghost in self.ghosts:
-            ghost.is_still_alive(self.pacman)
+            ghost.update_zombie_timer()
+            ghost.update_death_timer()
+
+    def update_pacman_aliveness(self):
+        self.pacman.is_still_alive(self.ghosts)
+
+    def update_ghosts_aliveness(self):
+        for ghost in self.ghosts:
+            self.score += ghost.is_still_alive(self.pacman)
 
     def is_game_over_or_won(self):
         if not self.pacman.alive:
@@ -129,8 +153,9 @@ class Player:
         self.strategy = strategy
 
     def next(self, action, maze):
-        self.next_position(action, maze)
-        self.next_orientation(action)
+        if self.alive:
+            self.next_position(action, maze)
+            self.next_orientation(action)
 
     def next_position(self, action, maze):
         if action.direction == Directions.up and not maze[self.line + 1][self.column]:
@@ -168,7 +193,12 @@ class Pacman(Player):
 
     def is_still_alive(self, ghosts):
         for ghost in ghosts:
-            if self.line == ghost.line and self.column == ghost.column:
+            if (
+                self.line == ghost.line
+                and self.column == ghost.column
+                and not ghost.is_zombie
+                and ghost.alive
+            ):
                 self.alive = False
 
 
@@ -185,9 +215,34 @@ class Ghost(Player):
         super().__init__(id, position, orientation, alive, strategy)
         self.is_zombie = False
         self.zombie_timer = -1
+        self.death_timer = -1
         self.color = color
+        self.initial_position = position
 
-    def is_still_alive(self, pacman):
+    def is_still_alive(self, pacman, time=10):
         if self.is_zombie:
             if self.line == pacman.line and self.column == pacman.column:
                 self.alive = False
+                self.death_timer = time
+                self.is_zombie = False
+                self.zombie_timer = -1
+                self.line = self.initial_position[0]
+                self.column = self.initial_position[1]
+                return 50
+        return 0
+
+    def get_zombified(self, time=20):
+        self.is_zombie = True
+        self.zombie_timer = time
+
+    def update_zombie_timer(self):
+        if self.zombie_timer >= 0:
+            self.zombie_timer -= 1
+            if self.zombie_timer == -1:
+                self.is_zombie = False
+
+    def update_death_timer(self):
+        if self.death_timer >= 0:
+            self.death_timer -= 1
+            if self.death_timer == -1:
+                self.alive = True

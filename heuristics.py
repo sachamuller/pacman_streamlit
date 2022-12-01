@@ -8,7 +8,7 @@ from utils import (
     manhattan_distance_between_players,
 )
 
-my_heuristic_definition = "def my_heuristic(maze, dots, pacman_line, pacman_column, ghost_line, ghost_column):"
+my_heuristic_definition = "def my_heuristic(maze, dots, power_pellets, pacman, ghost):"
 
 
 def get_heuristic_from_streamlit(heuristic_text):
@@ -26,10 +26,9 @@ def get_heuristic_from_streamlit(heuristic_text):
     heuristic_streamlit = lambda game: my_heuristic(
         game.maze,
         game.dots,
-        game.pacman.line,
-        game.pacman.column,
-        game.ghosts[0].line,
-        game.ghosts[0].column,
+        game.power_pellets,
+        game.pacman,
+        game.ghosts[0],
     )
     return heuristic_streamlit
 

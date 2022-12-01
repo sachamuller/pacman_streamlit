@@ -18,6 +18,9 @@ def create_layout(game):
     # adding food dots
     add_food_dots(game.dots, layout)
 
+    # adding power pellets
+    add_food_dots(game.power_pellets, layout, dots_size=0.25)
+
     # adding pacman
     for player in game.players:
         if player != game.pacman:
@@ -25,6 +28,8 @@ def create_layout(game):
     add_pacman(game.pacman, layout)
 
     add_game_over_or_game_won(game.game_over, game.game_won, layout)
+
+    add_score(game.score, game.maze, layout)
 
     return layout
 
@@ -95,13 +100,31 @@ def add_pacman(pacman, layout):
 def add_ghost(ghost, layout):
     smaller = 0.75
     path = f"M  {1.0* smaller + ghost.column + (1-smaller)/2}  {0.5* smaller + ghost.line + (1-smaller)/2} L  {1.0* smaller + ghost.column + (1-smaller)/2}  {0.0* smaller + ghost.line + (1-smaller)/2} L  {0.8334* smaller + ghost.column + (1-smaller)/2}  {0.19999999999999996* smaller + ghost.line + (1-smaller)/2} L  {0.6667000000000001* smaller + ghost.column + (1-smaller)/2}  {0.0* smaller + ghost.line + (1-smaller)/2} L  {0.5* smaller + ghost.column + (1-smaller)/2}  {0.19999999999999996* smaller + ghost.line + (1-smaller)/2} L  {0.33399999999999996* smaller + ghost.column + (1-smaller)/2}  {0.0* smaller + ghost.line + (1-smaller)/2} L  {0.16669999999999996* smaller + ghost.column + (1-smaller)/2}  {0.19999999999999996* smaller + ghost.line + (1-smaller)/2} L  {0.0* smaller + ghost.column + (1-smaller)/2}  {0.0* smaller + ghost.line + (1-smaller)/2} L  {0.0* smaller + ghost.column + (1-smaller)/2}  {0.5* smaller + ghost.line + (1-smaller)/2} C  {0.0* smaller + ghost.column + (1-smaller)/2}  {0.7764* smaller + ghost.line + (1-smaller)/2}  {0.2239* smaller + ghost.column + (1-smaller)/2}  {1.0* smaller + ghost.line + (1-smaller)/2}  {0.5* smaller + ghost.column + (1-smaller)/2}  {1.0* smaller + ghost.line + (1-smaller)/2} S  {1.0* smaller + ghost.column + (1-smaller)/2}  {0.7761* smaller + ghost.line + (1-smaller)/2}  {1.0* smaller + ghost.column + (1-smaller)/2}  {0.5* smaller + ghost.line + (1-smaller)/2} Z"
-    ghost = {
+    ghost_layout = {
         "type": "path",
         "path": path,
-        "fillcolor": ghost.color,
+        "fillcolor": "blue" if ghost.is_zombie else ghost.color,
+        "opacity": 1.0 if ghost.alive else 0.0,
         "line": {"width": 0},
     }
-    layout["shapes"].append(ghost)
+    layout["shapes"].append(ghost_layout)
+    layout["annotations"] = [
+        {
+            "xref": "x",
+            "yref": "y",
+            "x": ghost.column + 0.5,
+            "xanchor": "center",
+            "y": ghost.line + 0.5,
+            "yanchor": "middle",
+            "text": str(ghost.zombie_timer)
+            if ghost.is_zombie
+            else ("" if ghost.alive else str(ghost.death_timer)),
+            "showarrow": False,
+            "font": {"size": 20},
+            "bgcolor": "rgba(0, 0, 0, 0.5)" if not ghost.alive else "rgba(0, 0, 0, 0)",
+            # "borderpad": max(layout["height"], layout["width"]),
+        }
+    ]
 
 
 def add_game_over_or_game_won(game_over, game_won, layout):
@@ -116,7 +139,7 @@ def add_game_over_or_game_won(game_over, game_won, layout):
         text = ""
         bgcolor = "rgba(0, 0, 0, 0)"
 
-    layout["annotations"] = [
+    layout["annotations"].append(
         {
             "xref": "paper",
             "yref": "paper",
@@ -130,7 +153,25 @@ def add_game_over_or_game_won(game_over, game_won, layout):
             "bgcolor": bgcolor,
             # "borderpad": max(layout["height"], layout["width"]),
         }
-    ]
+    )
+
+
+def add_score(score, maze, layout):
+    layout["annotations"].append(
+        {
+            "xref": "paper",
+            "yref": "y",
+            "x": 0.5,
+            "xanchor": "center",
+            "y": 0.5,
+            "yanchor": "middle",
+            "text": f"score : {score}",
+            "showarrow": False,
+            "font": {"size": 20},
+            # "bgcolor": "rgba(0, 0, 0, 0.5)",
+            # "borderpad": 5,
+        }
+    )
 
 
 def get_fig_from_layout_list(layout_list, game, maze_name):
