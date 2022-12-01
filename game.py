@@ -86,10 +86,14 @@ class Game:
             self.score += ghost.is_still_alive(self.pacman)
 
     def is_game_over_or_won(self):
-        if not self.pacman.alive:
-            self.game_over = True
-        elif self.dots.sum() == 0:
-            self.game_won = True
+        if not self.game_over:
+            if not self.pacman.alive:
+                self.game_over = True
+                self.score -= 100
+        if not self.game_won:
+            if self.dots.sum() == 0:
+                self.game_won = True
+                self.score += 100
 
     def get_legal_directions(self, player_name):
         player = [p for p in self.players if p.name == player_name][0]
