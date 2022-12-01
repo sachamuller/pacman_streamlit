@@ -29,6 +29,8 @@ def create_layout(game):
 
     add_game_over_or_game_won(game.game_over, game.game_won, layout)
 
+    add_score(game.score, game.maze, layout)
+
     return layout
 
 
@@ -150,6 +152,24 @@ def add_game_over_or_game_won(game_over, game_won, layout):
             "font": {"size": 50},
             "bgcolor": bgcolor,
             # "borderpad": max(layout["height"], layout["width"]),
+        }
+    )
+
+
+def add_score(score, maze, layout):
+    layout["annotations"].append(
+        {
+            "xref": "paper",
+            "yref": "y",
+            "x": 0.5,
+            "xanchor": "center",
+            "y": 0.5,
+            "yanchor": "middle",
+            "text": f"score : {score}",
+            "showarrow": False,
+            "font": {"size": 20},
+            # "bgcolor": "rgba(0, 0, 0, 0.5)",
+            # "borderpad": 5,
         }
     )
 

@@ -25,23 +25,28 @@ class Game:
 
         self.game_over = False
         self.game_won = False
+        self.score = 0
 
         # Check game is valid and update some things if necessary
         self.check_players_names_are_unique()
+        self.update_ghosts_aliveness()
         self.update_dots()
         self.update_power_pellets()
-        self.update_aliveness()
+        self.update_pacman_aliveness()
         self.is_game_over_or_won()
 
     def next_state(self, action):
+        self.update_ghosts_aliveness()
         if not self.game_over or not self.game_won:
             for player in self.players:
                 if player.name == action.player.name:
                     player.next(action, self.maze)
             self.update_dots()
             self.update_power_pellets()
-            self.update_aliveness()
+            self.update_pacman_aliveness()
             self.update_ghost_timers()
+            if action.player.name == self.pacman.name:
+                self.score -= 1
             self.is_game_over_or_won()
 
     def project_next_state(self, action):
@@ -57,7 +62,9 @@ class Game:
                 )
 
     def update_dots(self):
-        self.dots[self.pacman.line][self.pacman.column] = 0
+        if self.dots[self.pacman.line][self.pacman.column] == 1:
+            self.score += 10
+            self.dots[self.pacman.line][self.pacman.column] = 0
 
     def update_power_pellets(self):
         if self.power_pellets[self.pacman.line][self.pacman.column] == 1:
@@ -70,10 +77,12 @@ class Game:
             ghost.update_zombie_timer()
             ghost.update_death_timer()
 
-    def update_aliveness(self):
+    def update_pacman_aliveness(self):
         self.pacman.is_still_alive(self.ghosts)
+
+    def update_ghosts_aliveness(self):
         for ghost in self.ghosts:
-            ghost.is_still_alive(self.pacman)
+            self.score += ghost.is_still_alive(self.pacman)
 
     def is_game_over_or_won(self):
         if not self.pacman.alive:
@@ -219,6 +228,8 @@ class Ghost(Player):
                 self.zombie_timer = -1
                 self.line = self.initial_position[0]
                 self.column = self.initial_position[1]
+                return 50
+        return 0
 
     def get_zombified(self, time=20):
         self.is_zombie = True
