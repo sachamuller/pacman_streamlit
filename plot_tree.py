@@ -12,10 +12,8 @@ def plot_tree(tree, show=True):
     G = Graph()
     G = G.ListDict(tree_dict_list)
     nr_vertices = G.vcount()
-    v_label = [str(tree.nodes_dict[i].value) for i in range(nr_vertices)]
+    v_label = [str(round(tree.nodes_dict[i].value, 2)) for i in range(nr_vertices)]
 
-    # G.vs["label"] = v_label
-    # lay = G.layout('rt')
     lay = G.layout_reingold_tilford(mode="in", root=[0])
 
     position = {k: lay[k] for k in range(nr_vertices)}
@@ -172,16 +170,16 @@ def get_tree_fig_from_data_and_layout_list(layout_list, data_list):
     max_y = max([max(data_list[i][1]["y"]) for i in range(len(data_list))])
     min_y = min([min(data_list[i][1]["y"]) for i in range(len(data_list))])
     frames = [
-        {"name": f"{i}", "data": data_list[i], "layout": layout_list[i]}
+        {"name": f"{i*2}", "data": data_list[i], "layout": layout_list[i]}
         for i in range(len(layout_list))
     ]
 
     sliderSteps = [
         {
             "method": "animate",
-            "label": f"{i}",
+            "label": f"{i*2}",
             "args": [
-                [f"{i}"],
+                [f"{i*2}"],
                 {
                     "mode": "immediate",
                     "transition": {"duration": 0},
@@ -203,5 +201,5 @@ def get_tree_fig_from_data_and_layout_list(layout_list, data_list):
             "visible": False,
         },
     }
-    fig = plotly.graph_objects.Figure(data_list[0], layout, frames)
+    fig = plotly.graph_objects.Figure(data_list[0], layout | layout_list[0], frames)
     return fig
