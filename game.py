@@ -11,6 +11,7 @@ class Game:
         game_board,
         pacman_strategy,
         ghosts_strategy,
+        build_tree=False,
     ):
         self.maze = game_board.maze
         self.dots = game_board.dots
@@ -118,6 +119,28 @@ class Game:
                 list_layout.append(create_layout(self))
                 count_turns += 1
         return list_layout
+
+    def run_and_get_layout_and_tree(self, max_turns=None):
+        list_layout = [create_layout(self)]
+        tree_layouts = []
+        tree_datas = []
+        count_turns = 0
+        while (
+            not self.game_over
+            and not self.game_won
+            and (max_turns is not None and count_turns < max_turns)
+        ):
+            for player in self.players:
+                if player.name == self.pacman.name:
+                    action, tree_data, tree_layout = player.strategy(self)
+                    tree_layouts.append(tree_layout)
+                    tree_datas.append(tree_data)
+                else:
+                    action = player.strategy(self)
+                self.next_state(action)
+                list_layout.append(create_layout(self))
+                count_turns += 1
+        return list_layout, tree_datas, tree_layouts
 
     def __repr__(self) -> str:
         result = ""

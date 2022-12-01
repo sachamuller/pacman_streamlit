@@ -174,7 +174,7 @@ def add_score(score, maze, layout):
     )
 
 
-def get_fig_from_layout_list(layout_list, game, maze_name):
+def get_game_fig_from_layout_list(layout_list, game, maze_name):
     frames = [
         {"name": f"{i}", "data": [], "layout": layout_list[i]}
         for i in range(len(layout_list))

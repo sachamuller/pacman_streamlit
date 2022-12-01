@@ -1,13 +1,11 @@
 from enum import Enum
 from utils import NodeTypes
-from plot_tree import plot_tree
 
 
 class Tree:
     def __init__(self, initial_node):
         self.initial_node = initial_node
-        self.list_nodes = []
-        self.max_depth = None
+        self.nodes_dict = {}
 
     def convert_to_dict_list(self):
         self.initial_node.name = 0
@@ -25,6 +23,13 @@ class Tree:
                 ]
             nodes_to_expand += expanded_node.children_nodes
         return result
+
+    def build_nodes_dict(self):
+        nodes_to_expand = [self.initial_node]
+        while len(nodes_to_expand) > 0:
+            expanded_node = nodes_to_expand.pop()
+            self.nodes_dict[expanded_node.name] = expanded_node
+            nodes_to_expand += expanded_node.children_nodes
 
 
 class Node:
@@ -53,6 +58,8 @@ class Node:
 
 
 if __name__ == "__main__":
+    from plot_tree import plot_tree
+
     a = Node(1, None, None, NodeTypes.max)
     b = Node(2, a, None, NodeTypes.max)
     c = Node(3, a, None, NodeTypes.max)

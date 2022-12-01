@@ -8,7 +8,8 @@ from game import Game
 from heuristics import get_heuristic_from_streamlit, my_heuristic_definition
 from mazes import game_board_dict
 from my_strategies import ghost_strategy
-from plot_pacman import get_fig_from_layout_list
+from plot_pacman import get_game_fig_from_layout_list
+from plot_tree import get_tree_ith_move
 from utils import Action
 
 seed(42)
@@ -63,13 +64,14 @@ heuristic_text = st.text_area(
     my_heuristic_definition,
     """# Write your code here
 # No need to indent from the function definition
-return 0""",
+return -dots.sum()""",
 )
 
 game_initiatlization = Game(game_board, None, [None])
 
 
 if st.button("Compute game"):
+    game_was_launched = True
     with st.spinner("Computing your game..."):
         game = deepcopy(game_initiatlization)
 
@@ -111,13 +113,29 @@ if st.button("Compute game"):
                 game, heuristic, game.pacman, game.ghosts[0]
             )
 
-            layout_list = game.run_and_get_layout(max_number)
+            layout_list, tree_datas, tree_layouts = game.run_and_get_layout_and_tree(
+                max_number
+            )
 
         except Exception as error:
             st.exception(error)
 
         else:
-            fig = get_fig_from_layout_list(layout_list, game, maze_name)
+            game_fig = get_game_fig_from_layout_list(layout_list, game, maze_name)
 
-            # Plot!
-            st.plotly_chart(fig, use_container_width=True)
+            # Plot game
+            st.plotly_chart(game_fig, use_container_width=True)
+
+            st.subheader("Visualizing the game tree")
+
+            move_id = st.text_input(
+                "Chose a move for which you want to plot the decision tree :", "0"
+            )
+
+            if st.button("Compute tree"):
+                with st.spinner("Computing tree..."):
+                    # Plot tree
+                    tree_fig = get_tree_ith_move(
+                        tree_layouts, tree_datas, int(move_id) // 2
+                    )
+                    st.plotly_chart(tree_fig, use_container_width=True)
